@@ -5,6 +5,7 @@ import TasksPage from "./TaskPages/TasksPage";
 import UserPage from "./UserPage";
 import CreateTaskPage from "./TaskPages/CreateTaskPage";
 import CreateNewExpansePage from "./ExpansesPages/CreateNewExpanse";
+import ExpansePage from "./ExpansesPages/ExpansePage";
 
 export {
   LoginPage,
@@ -14,4 +15,5 @@ export {
   UserPage,
   CreateTaskPage,
   CreateNewExpansePage,
+  ExpansePage,
 };

@@ -10,10 +10,10 @@ import {
   TasksPage,
   CreateTaskPage,
   CreateNewExpansePage,
+  ExpansePage,
 } from "./pages";
-import { Navbar } from "./components";
+
 import TestMui from "./pages/TestMui";
-import { Paper } from "@mui/material";
 
 const App = () => {
   return (
@@ -51,7 +51,14 @@ const App = () => {
             <Route path=":taskId" element={<div>Single task</div>} />
           </Route>
           <Route path="/expanses" element={<AuthWrapper />}>
-            <Route index element={<AuthWrapper></AuthWrapper>} />
+            <Route
+              index
+              element={
+                <AuthWrapper>
+                  <ExpansePage />
+                </AuthWrapper>
+              }
+            />
             <Route path="create-new" element={<CreateNewExpansePage />} />
           </Route>
         </Route>

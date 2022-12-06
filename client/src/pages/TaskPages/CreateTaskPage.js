@@ -58,11 +58,11 @@ const CreateTaskPage = () => {
           margin="normal"
           required
           fullWidth
-          id="name"
-          label="Task Title"
-          name="name"
-          autoComplete="name"
           autoFocus
+          label="Task Title"
+          autoComplete="name"
+          id="name"
+          name="name"
           onChange={handleChange}
           value={values.name}
         />
