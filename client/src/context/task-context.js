@@ -1,7 +1,7 @@
 import React, { useContext, useReducer } from "react";
 import { useNavigate } from "react-router";
 
-import axios from "axios";
+import { authorizedFetch } from "../utils/axios";
 import reducer from "../reducer/task-reducer";
 
 const TaskContext = React.createContext();
@@ -23,11 +23,7 @@ const TaskContextProvider = ({ children }) => {
       dispatch({ type: "SET_LOADING" });
       const {
         data: { tasks },
-      } = await axios.get(`http://localhost:5010/api/v1/task?status=${query}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      } = await authorizedFetch(token).get(`/task?status=${query}`);
 
       dispatch({ type: "GET_ALL_TASKS", payload: tasks });
       dispatch({ type: "END_LOADING" });
@@ -44,7 +40,7 @@ const TaskContextProvider = ({ children }) => {
 
       const {
         data: { task },
-      } = await axios.post("http://localhost:5010/api/v1/task", newTask, {
+      } = await authorizedFetch(token).post("/task", newTask, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -65,8 +61,8 @@ const TaskContextProvider = ({ children }) => {
 
     try {
       dispatch({ type: "SET_LOADING" });
-      const { data } = await axios.patch(
-        `http://localhost:5010/api/v1/task/${_id}`,
+      const { data } = await authorizedFetch(token).patch(
+        `/task/${_id}`,
         { name, status },
         {
           headers: {
@@ -86,14 +82,11 @@ const TaskContextProvider = ({ children }) => {
   const deleteTask = async (taskId, token) => {
     try {
       dispatch({ type: "SET_LOADING" });
-      const data = await axios.delete(
-        "http://localhost:5010/api/v1/task/" + taskId,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const data = await authorizedFetch(token).delete("/task/" + taskId, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       getAllTasks(token, "all");
       dispatch({ type: "END_LOADING" });
     } catch (error) {
@@ -104,7 +97,7 @@ const TaskContextProvider = ({ children }) => {
   const deleteAllCompletedTasks = async (token) => {
     try {
       dispatch({ type: "SET_LOADING" });
-      const data = await axios.delete("http://localhost:5010/api/v1/task", {
+      const data = await authorizedFetch(token).delete("/task", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

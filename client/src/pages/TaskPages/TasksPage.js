@@ -2,7 +2,13 @@ import React, { useEffect } from "react";
 
 import { useLocation, Link } from "react-router-dom";
 
-import { Box, Typography, Button, Container } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Container,
+  CircularProgress,
+} from "@mui/material";
 
 import { useTaskContext } from "../../context/task-context";
 import { useAuthContext } from "../../context/auth-context";
@@ -24,7 +30,7 @@ const TasksPage = () => {
   if (loading) {
     return (
       <Box sx={{ flexGrow: 1, maxWidth: 752, m: "2rem auto" }}>
-        <Typography variant="h2">LOading...</Typography>
+        <CircularProgress color="inherit" />
       </Box>
     );
   }

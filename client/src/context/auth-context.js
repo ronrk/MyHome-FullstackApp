@@ -1,5 +1,5 @@
-import React, { useState, useReducer, useContext, useEffect } from "react";
-import axios from "axios";
+import React, { useReducer, useContext } from "react";
+import { customFetch } from "../utils/axios";
 
 import reducer from "../reducer/auth-reducer";
 
@@ -18,7 +18,7 @@ const AuthContextProvider = ({ children }) => {
     try {
       const {
         data: { user },
-      } = await axios.post("http://localhost:5010/api/v1/auth/login", {
+      } = await customFetch.post("/auth/login", {
         email,
         password,
       });
@@ -31,7 +31,7 @@ const AuthContextProvider = ({ children }) => {
     try {
       const {
         data: { user },
-      } = await axios.post("http://localhost:5010/api/v1/auth/register", {
+      } = await customFetch.post("/auth/register", {
         name,
         email,
         password,

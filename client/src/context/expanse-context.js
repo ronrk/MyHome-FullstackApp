@@ -1,7 +1,7 @@
 import React, { useContext, useReducer } from "react";
 import { useNavigate } from "react-router";
 
-import axios from "axios";
+import { authorizedFetch } from "../utils/axios";
 import reducer from "../reducer/expanse-reducer";
 
 const ExpanseContext = React.createContext();
@@ -23,7 +23,7 @@ const ExpanseContextProvider = ({ children }) => {
       dispatch({ type: "SET_LOADING" });
       const {
         data: { expanses },
-      } = await axios.get(`http://localhost:5010/api/v1/expanse`, {
+      } = await authorizedFetch(token).get(`/expanse`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -43,7 +43,7 @@ const ExpanseContextProvider = ({ children }) => {
 
       const {
         data: { expanse },
-      } = await axios.post("http://localhost:5010/api/v1/expanse", newExpanse, {
+      } = await authorizedFetch(token).post("/expanse", newExpanse, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -62,8 +62,8 @@ const ExpanseContextProvider = ({ children }) => {
 
     try {
       dispatch({ type: "SET_LOADING" });
-      const { data } = await axios.patch(
-        `http://localhost:5010/api/v1/expanse/${_id}`,
+      const { data } = await authorizedFetch(token).patch(
+        `/expanse/${_id}`,
         { name, value, bills },
         {
           headers: {
@@ -83,8 +83,8 @@ const ExpanseContextProvider = ({ children }) => {
   const deleteExpanse = async (expanseId, token) => {
     try {
       dispatch({ type: "SET_LOADING" });
-      const data = await axios.delete(
-        "http://localhost:5010/api/v1/expanse/" + expanseId,
+      const data = await authorizedFetch(token).delete(
+        "/expanse/" + expanseId,
         {
           headers: {
             Authorization: `Bearer ${token}`,

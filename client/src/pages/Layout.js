@@ -17,7 +17,7 @@ const Layout = () => {
               ? theme.palette.primary.darkWithOpacity
               : theme.palette.grey[900],
           flexGrow: 1,
-          height: "100vh",
+          minHeight: "100vh",
           overflow: "auto",
         }}
       >
