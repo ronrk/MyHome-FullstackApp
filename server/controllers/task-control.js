@@ -3,10 +3,22 @@ const { BadRequestError } = require("../errors");
 const Task = require("../models/Task");
 
 const getAllTasks = async (req, res) => {
-  const tasks = await Task.find({ createdBy: req.user.userId }).sort(
-    "createdAt"
-  );
+  console.log(req.query);
+  const { status } = req.query;
+  let tasks;
+  if (status === "all") {
+    tasks = await Task.find({
+      createdBy: req.user.userId,
+    }).sort("createdAt");
+  } else {
+    tasks = await Task.find({
+      createdBy: req.user.userId,
+      status: req.query.status,
+    }).sort("createdAt");
+  }
+
   res.status(StatusCodes.OK).json({ tasks });
+  // res.json();
 };
 
 const createTask = async (req, res) => {
@@ -27,7 +39,7 @@ const getTask = async (req, res) => {
 };
 
 const updateTask = async (req, res) => {
-  if (req.body.status === "" || name === "") {
+  if (req.body.status === "" || req.body.name === "") {
     throw new BadRequestError("wrong values for name or status");
   }
 
