@@ -1,11 +1,14 @@
 import AuthWrapper from "./AuthWrapper";
 import LoginPage from "./LoginPage";
 import Dashboard from "./Dashbord";
-import TasksPage from "./TaskPages/TasksPage";
-import UserPage from "./UserPage";
-import CreateTaskPage from "./TaskPages/CreateTaskPage";
-import CreateNewExpansePage from "./ExpansesPages/CreateNewExpanse";
-import ExpansePage from "./ExpansesPages/ExpansePage";
+import TasksPage from "./Task/TasksPage";
+import UserPage from "./User/UserPage";
+import CreateTaskPage from "./Task/CreateTaskPage";
+import CreateNewExpansePage from "./Expanse/CreateNewExpanse";
+import ExpansePage from "./Expanse/ExpansePage";
+import NotFoundPage from "./NotFoundPage";
+import UserUpdatePage from "./User/UserUpdatePage";
+import WelcomePage from "./WelcomePage";
 
 export {
   LoginPage,
@@ -16,4 +19,7 @@ export {
   CreateTaskPage,
   CreateNewExpansePage,
   ExpansePage,
+  NotFoundPage,
+  UserUpdatePage,
+  WelcomePage,
 };

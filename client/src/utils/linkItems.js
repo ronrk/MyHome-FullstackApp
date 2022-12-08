@@ -16,29 +16,33 @@ import AccountCircleSharpIcon from "@mui/icons-material/AccountCircleSharp";
 import PermContactCalendarSharpIcon from "@mui/icons-material/PermContactCalendarSharp";
 
 export const mainListItems = [
-  { label: "Home", path: "/", icon: <DashboardIcon /> },
+  {
+    label: "Home",
+    path: "/home",
+    icon: <DashboardIcon color="inherit" />,
+  },
   {
     label: "Tasks",
     icon: <FormatListBulletedSharpIcon />,
     sublinks: [
       {
-        label: "All Tasks",
-        path: "/tasks?status=all",
-        icon: <AssignmentReturnedSharpIcon />,
-      },
-      {
         label: "create new task",
-        path: "/tasks/create-new",
+        path: "/home/tasks/create-new",
         icon: <AddTaskSharpIcon />,
       },
       {
+        label: "All Tasks",
+        path: "/home/tasks?status=all",
+        icon: <AssignmentReturnedSharpIcon />,
+      },
+      {
         label: "All completed",
-        path: "/tasks?status=done",
+        path: "/home/tasks?status=done",
         icon: <TaskAltSharpIcon />,
       },
       {
         label: "All active",
-        path: "/tasks?status=pending",
+        path: "/home/tasks?status=pending",
         icon: <AssignmentLateSharpIcon />,
       },
     ],
@@ -48,14 +52,14 @@ export const mainListItems = [
     icon: <PointOfSaleSharpIcon />,
     sublinks: [
       {
-        label: "All Expanses",
-        path: "/expanses",
-        icon: <RequestQuoteSharpIcon />,
+        label: "create new expanse",
+        path: "/home/expanses/create-new",
+        icon: <AddShoppingCartSharpIcon />,
       },
       {
-        label: "create new expanse",
-        path: "/expanses/create-new",
-        icon: <AddShoppingCartSharpIcon />,
+        label: "All Expanses",
+        path: "/home/expanses",
+        icon: <RequestQuoteSharpIcon />,
       },
     ],
   },
@@ -63,7 +67,11 @@ export const mainListItems = [
     label: "MyHouses",
     icon: <HomeWorkSharpIcon />,
     sublinks: [
-      { label: "My Houses", path: "/myhouses", icon: <HomeWorkSharpIcon /> },
+      {
+        label: "My Houses",
+        path: "/home/myhouses",
+        icon: <HomeWorkSharpIcon />,
+      },
       //   { label: "create new expanse", path: "/expanses/create-new" },
     ],
   },
@@ -73,7 +81,7 @@ export const mainListItems = [
     sublinks: [
       {
         label: "profile",
-        path: "/user",
+        path: "/home/user",
         icon: <PermContactCalendarSharpIcon />,
       },
     ],

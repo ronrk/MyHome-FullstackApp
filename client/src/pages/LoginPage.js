@@ -12,157 +12,175 @@ import {
   FormControlLabel,
   Box,
   Typography,
-  Container,
+  FormGroup,
 } from "@mui/material";
 
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 
-const Copyright = (props) => {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        MyHome App
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-};
-
 const LoginPage = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const [values, setValues] = useState({ email: "", name: "", password: "" });
-  const { user, login, register } = useAuthContext();
-  const { email, name, password } = values;
+  const [values, setValues] = useState({
+    email: "",
+    name: "",
+    password: "",
+    checked: false,
+  });
+  const { user, isAuth, login, register, error, initilizeError } =
+    useAuthContext();
+  const { email, name, password, checked } = values;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    initilizeError();
 
     setValues((prev) => {
       return { ...prev, [name]: value };
     });
   };
 
+  const handleRememberMeChange = (e) => {
+    setValues((prev) => ({ ...prev, checked: e.target.checked }));
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (user) {
+    console.log("submit");
+    if (isAuth) {
       console.error("user already login");
       return;
     }
     if (pathname === "/login") {
-      login(email, password);
+      login(email, password, checked);
       return;
     }
     if (pathname === "/register") {
-      register(name, email, password);
+      register(name, email, password, checked);
       return;
     }
   };
 
   useEffect(() => {
-    if (user) {
-      navigate("/");
+    if (user && user.token) {
+      navigate("/home");
     }
   }, [user]);
 
+  useEffect(() => {
+    initilizeError();
+  }, [pathname]);
+
   return (
-    <Container component="main" maxWidth="xs">
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        maxWidth: 500,
+        minWidth: 300,
+        m: "0 auto",
+        mt: 2,
+        p: 2,
+      }}
+    >
+      <Avatar sx={{ m: 1, p: 3, bgcolor: "primary.main" }}>
+        <LockOpenIcon fontSize="large" color="secondary" />
+      </Avatar>
+      <Typography component="h1" variant="h5" p="0 3rem" textAlign="center">
+        {pathname === "/login"
+          ? "Welcome Back, Please Sign In"
+          : "Welcome! Sign Up and be able to use the app"}
+      </Typography>
       <Box
-        sx={{
-          marginTop: 8,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
+        component="form"
+        onSubmit={handleSubmit}
+        noValidate
+        sx={{ mt: 1, width: "100%" }}
+        display="flex"
+        flexDirection="column"
       >
-        <Avatar sx={{ m: 1, p: 3, bgcolor: "secondary.dark" }}>
-          <LockOpenIcon fontSize="large" />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          {pathname === "/login" ? "Sign in" : "Sign up"}
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+        <FormGroup>
           {pathname === "/login" ? null : (
             <TextField
+              error={error.status}
               margin="normal"
-              required
               fullWidth
+              required
               id="name"
-              label="Name"
-              name="name"
               autoComplete="first-name"
-              autoFocus
-              onChange={handleChange}
+              name="name"
+              label="Name"
               value={name}
+              onChange={handleChange}
             />
           )}
           <TextField
-            margin="normal"
-            required
+            error={error.status}
             fullWidth
+            required
+            margin="normal"
             id="email"
-            label="Email Address"
             name="email"
+            label="Email Address"
             autoComplete="email"
             autoFocus
-            onChange={handleChange}
             value={email}
+            onChange={handleChange}
+            type="email"
           />
           <TextField
-            margin="normal"
-            required
+            error={error.status}
             fullWidth
-            name="password"
-            label="Password"
-            type="password"
+            required
+            margin="normal"
             id="password"
+            name="password"
+            type="password"
             autoComplete="current-password"
-            onChange={handleChange}
+            label="Password"
             value={password}
+            onChange={handleChange}
+            helperText={error.status ? error.message : ""}
           />
-          {pathname === "/login" ? (
-            <FormControlLabel
-              control={
-                <BpCheckbox
-                  value="remember"
-                  color="primary"
-                  name="remember"
-                  id="remember"
-                />
-              }
-              label="Remember me"
-            />
-          ) : null}
-
+        </FormGroup>
+        <Box display="flex" alignItems="center">
           <Button
             type="submit"
-            fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{
+              p: 1,
+              mt: 3,
+              mb: 2,
+              alignSelf: "center",
+              width: 150,
+              flexGrow: 1,
+            }}
           >
             {pathname === "/login" ? "Sign In" : "Sign Up"}
           </Button>
-
-          {pathname === "/login" ? (
-            <Link to="/register" variant="body2">
-              {"Don't have an account? Sign Up"}
-            </Link>
-          ) : (
-            <Link to="/login" variant="body2">
-              {"Already have an account? Sign In"}
-            </Link>
-          )}
+          <FormControlLabel
+            sx={{ marginLeft: "auto" }}
+            onChange={handleRememberMeChange}
+            control={
+              <BpCheckbox value="remember" name="remember" id="remember" />
+            }
+            label="Remember me"
+          />
         </Box>
+        <Button
+          variant="outlined"
+          color="darkBlue"
+          fullWidth
+          component={Link}
+          to={pathname === "/login" ? "/register" : "/login"}
+        >
+          {pathname === "/login"
+            ? `Don't have an account? Sign Up`
+            : "Already have an account? Sign In"}
+        </Button>
       </Box>
-      <Copyright sx={{ mt: 8, mb: 4 }} />
-    </Container>
+    </Box>
   );
 };
 

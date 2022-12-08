@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import { useNavigate, Outlet, useLocation } from "react-router-dom";
+import { useNavigate, Navigate, Outlet, useLocation } from "react-router-dom";
 
 import { useAuthContext } from "../context/auth-context";
 
 const AuthWrapper = ({ children }) => {
-  const { user } = useAuthContext();
+  const { isAuth, user } = useAuthContext();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -21,17 +21,15 @@ const AuthWrapper = ({ children }) => {
   // return <Navigate to="/login" state={{ from: location }} replace />;
   //   }
 
-  useEffect(() => {
-    if (!user?.token) {
-      console.log("navigate from auth wraper");
-      navigate("/login", { state: { from: location } });
-    }
-  }, [user]);
-
+  if (!user || user?.token === undefined) {
+    console.log({ el: "AUTHWRAPPER", auth: "USER IS NOT EXIST", user });
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+  console.log({ el: "AUTHWRAPPER", auth: "USER IS  EXIST", user });
   return (
     <>
       <Outlet />
-      {children}
+      {/* {children} */}
     </>
   );
 };

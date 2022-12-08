@@ -10,11 +10,14 @@ import {
 } from "@mui/material";
 
 import DoneOutlineSharpIcon from "@mui/icons-material/DoneOutlineSharp";
-
 import RectangleSharpIcon from "@mui/icons-material/RectangleSharp";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditSharpIcon from "@mui/icons-material/EditSharp";
 import ThumbUpAltSharpIcon from "@mui/icons-material/ThumbUpAltSharp";
+
+import AssignmentReturnedSharpIcon from "@mui/icons-material/AssignmentReturnedSharp";
+import TaskAltSharpIcon from "@mui/icons-material/TaskAltSharp";
+import AssignmentLateSharpIcon from "@mui/icons-material/AssignmentLateSharp";
 
 import { useAuthContext } from "../../context/auth-context";
 import { useTaskContext } from "../../context/task-context";
@@ -26,7 +29,7 @@ const Demo = styled("div")(({ theme }) => ({
 
 const TaskCard = ({ name, status, _id }) => {
   const { user } = useAuthContext();
-  const { editTask, deleteTask } = useTaskContext();
+  const { editTask, deleteTask, loading } = useTaskContext();
   const [onNameEdit, setOnNameEdit] = useState(false);
   const [value, setValue] = useState("");
   const handleStatusChange = () => {
@@ -41,7 +44,7 @@ const TaskCard = ({ name, status, _id }) => {
     setOnNameEdit(false);
   };
   return (
-    <Demo>
+    <Demo sx={{ opacity: status === "done" ? 0.6 : 1 }}>
       <List>
         <ListItem
           secondaryAction={
@@ -56,11 +59,11 @@ const TaskCard = ({ name, status, _id }) => {
         >
           <IconButton onClick={handleStatusChange}>
             {status === "done" ? (
-              <DoneOutlineSharpIcon color="success" />
+              <TaskAltSharpIcon color="success" />
             ) : (
-              <RectangleSharpIcon
+              <AssignmentLateSharpIcon
                 fontSize="small"
-                sx={{ color: "secondary.common" }}
+                sx={{ color: "primary.dark" }}
               />
             )}
           </IconButton>
@@ -102,7 +105,7 @@ const TaskCard = ({ name, status, _id }) => {
                 },
                 status === "done" && {
                   "& .MuiListItemText-primary": {
-                    textDecoration: "line-through 1px green",
+                    textDecoration: "line-through 2.5px #081812",
                     color: "primary.main",
                   },
                 },

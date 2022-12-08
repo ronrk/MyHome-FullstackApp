@@ -11,60 +11,39 @@ import {
   CreateTaskPage,
   CreateNewExpansePage,
   ExpansePage,
+  NotFoundPage,
+  UserUpdatePage,
+  WelcomePage,
 } from "./pages";
-
-import TestMui from "./pages/TestMui";
 
 const App = () => {
   return (
     <div>
       <Routes>
-        <Route element={<Layout />}>
+        <Route path="/" element={<Layout />}>
+          <Route path="/" element={<WelcomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<LoginPage />} />
-          <Route
-            path="/"
-            element={
-              <AuthWrapper>
-                <Dashboard />
-              </AuthWrapper>
-            }
-          />
-          <Route
-            path="/user"
-            element={
-              <AuthWrapper>
-                <UserPage />
-              </AuthWrapper>
-            }
-          />
-          <Route path="/tasks" element={<AuthWrapper />}>
-            <Route
-              index
-              element={
-                <AuthWrapper>
-                  <TasksPage />
-                </AuthWrapper>
-              }
-            />
-            <Route path="create-new" element={<CreateTaskPage />} />
-            <Route path=":taskId" element={<div>Single task</div>} />
-          </Route>
-          <Route path="/expanses" element={<AuthWrapper />}>
-            <Route
-              index
-              element={
-                <AuthWrapper>
-                  <ExpansePage />
-                </AuthWrapper>
-              }
-            />
-            <Route path="create-new" element={<CreateNewExpansePage />} />
+          <Route element={<AuthWrapper />}>
+            <Route path="/home" element={<Dashboard />} />
+
+            <Route path="/home/tasks" element={<TasksPage />} />
+
+            <Route path="/home/tasks/create-new" element={<CreateTaskPage />} />
+
+            <Route path="/home/expanses" element={<ExpansePage />}>
+              <Route
+                path="/home/expanses/create-new"
+                element={<CreateNewExpansePage />}
+              />
+            </Route>
+            <Route path="/home/user" element={<UserPage />}>
+              <Route path="/home/user-update" element={<UserUpdatePage />} />
+            </Route>
           </Route>
         </Route>
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
-      {/* <LoginPage /> */}
-      {/* <TestMui /> */}
     </div>
   );
 };

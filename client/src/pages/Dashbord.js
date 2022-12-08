@@ -10,22 +10,7 @@ import {
 import { Grid } from "@mui/material";
 
 const Dashbord = () => {
-  return (
-    <Grid container>
-      <Grid item xs={8}>
-        <UserProfileDashboard />
-      </Grid>
-      <Grid item xs={4}>
-        <MyHouseDashboard />
-      </Grid>
-      <Grid item xs={8}>
-        <ExpanseDashbaord />
-      </Grid>
-      <Grid item xs={4}>
-        <TaskDashboard />
-      </Grid>
-    </Grid>
-  );
+  return <Grid container>HOME DASHBOARD</Grid>;
 };
 
 export default Dashbord;

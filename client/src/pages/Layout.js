@@ -3,31 +3,25 @@ import { Link, Outlet } from "react-router-dom";
 import { Box, Toolbar, Grid, Container } from "@mui/material";
 import { Navbar, Sidebar } from "../components";
 
+import { useAuthContext } from "../context/auth-context";
+
 const Layout = () => {
+  const { user } = useAuthContext();
   return (
     <Box sx={{ display: "flex" }}>
       <Navbar />
       <Sidebar />
-
       <Box
         component="main"
         sx={{
-          backgroundColor: (theme) =>
-            theme.palette.mode === "light"
-              ? theme.palette.primary.darkWithOpacity
-              : theme.palette.grey[900],
           flexGrow: 1,
           minHeight: "100vh",
           overflow: "auto",
+          bgcolor: "primary.darkWithOpacity",
         }}
       >
-        <Toolbar />
-
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-          <Grid container spacing={3}>
-            <Outlet />
-          </Grid>
-        </Container>
+        <Toolbar sx={{ m: 1 }} />
+        <Outlet />
       </Box>
     </Box>
   );

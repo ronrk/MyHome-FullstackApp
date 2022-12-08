@@ -1,148 +1,93 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
 import { useUIContext } from "../../context/ui-context";
+import { useAuthContext } from "../../context/auth-context";
+
+import UserMenu from "./UserMenu";
 
 import {
   IconButton,
-  styled,
   Toolbar,
   Typography,
-  Box,
   Tooltip,
-  MenuItem,
-  Avatar,
-  Menu,
-  Container,
+  Box,
+  Button,
 } from "@mui/material";
-import MuiAppBar from "@mui/material/AppBar";
+import { StyledNavbar } from "./StyledNavbar";
 import MenuOpenSharpIcon from "@mui/icons-material/MenuOpenSharp";
 import RoofingSharpIcon from "@mui/icons-material/RoofingSharp";
+import { AccountCircle } from "@mui/icons-material";
 
-const Navbar2 = () => {
-  const { isDrawerOpen, toggleDrawer } = useUIContext();
-  const [open, setOpen] = useState(true);
+const Navbar = () => {
+  const {
+    isDrawerOpen,
+    toggleDrawer,
+    drawerWidth,
+    handleOpenUserMenu,
+    handleCloseUserMenu,
+  } = useUIContext();
 
-  const [anchorElUser, setAnchorElUser] = useState(null);
-
-  const handleOpenUserMenu = (e) => {
-    setAnchorElUser(e.target);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
-
-  const drawerWidth = 240;
-
-  const AppBar = styled(MuiAppBar, {
-    shouldForwardProp: (prop) => prop !== "open",
-  })(({ theme, open }) => ({
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    ...(open && {
-      marginLeft: drawerWidth,
-      width: `calc(100% - ${drawerWidth}px)`,
-      transition: theme.transitions.create(["width", "margin"], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    }),
-  }));
+  const { user, logout } = useAuthContext();
 
   return (
-    <AppBar position="absolute" open={isDrawerOpen} sx={{ pl: 2 }}>
-      <Toolbar
-        disableGutters
-        sx={{
-          pr: "24px", // keep right padding when drawer closed
-        }}
-      >
+    <StyledNavbar
+      position="fixed"
+      open={isDrawerOpen}
+      drawerwidth={drawerWidth}
+    >
+      <Toolbar disableGutters sx={{ mt: 1, mb: 1, pl: 2, pr: 2 }}>
+        {user && user.token && (
+          <IconButton
+            onClick={toggleDrawer}
+            edge="start"
+            aria-label="open drawer"
+            sx={{
+              marginRight: "36px",
+              color: "primary.common",
+              transform: "rotate(180deg)",
+              ...(isDrawerOpen && { display: "none" }),
+            }}
+          >
+            <MenuOpenSharpIcon />
+          </IconButton>
+        )}
+
         <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="open drawer"
-          onClick={toggleDrawer}
+          component={Link}
+          to={"/home"}
           sx={{
-            marginRight: "36px",
-            ...(isDrawerOpen && { display: "none" }),
+            // bgcolor: "darkBlue.light",
+            mr: 1,
+
+            backgroundImage: "linear-gradient(to left top, #040607, #16190b)",
           }}
         >
-          <MenuOpenSharpIcon sx={{ transform: "rotate(180deg)" }} />
+          <RoofingSharpIcon fontSize="large" color="secondary" sx={{}} />
         </IconButton>
-
         <Typography
-          component={Link}
-          to="/"
-          variant="h6"
+          flexGrow={1}
+          variant="h3"
           noWrap
+          fontFamily="'Kenia', cursive"
           sx={{
             mr: 2,
-            display: { xs: "none", md: "flex" },
-            fontFamily: "monospace",
             fontWeight: 700,
-            letterSpacing: ".3rem",
-            color: "inherit",
+            letterSpacing: ".4rem",
+            color: "secondary.main",
             textDecoration: "none",
-            flexGrow: 1,
           }}
         >
-          <RoofingSharpIcon
-            fontSize="large"
-            sx={{
-              display: { xs: "none", md: "flex" },
-              mr: 1,
-              color: "secondary.main",
-            }}
-          />
           My Houses
         </Typography>
-        {/* Navbar2 */}
-
-        <Tooltip title="Open settings">
-          <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-            <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-          </IconButton>
-        </Tooltip>
-        <Menu
-          elevation={1}
-          sx={{ mt: "45px" }}
-          id="menu-appbar"
-          //   anchorEl={anchorElUser}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          open={Boolean(anchorElUser)}
-          onClose={handleCloseUserMenu}
-        >
-          {[{ name: "demo", path: "demo" }].map((setting) => (
-            <MenuItem key={setting.name} onClick={handleCloseUserMenu}>
-              <Typography
-                textAlign="center"
-                component={Link}
-                to={setting.path}
-                sx={{
-                  color: "inherit",
-                  textDecoration: "none",
-                }}
-              >
-                {setting.name}
-              </Typography>
-            </MenuItem>
-          ))}
-        </Menu>
+        {user ? (
+          <Button onClick={logout} color="error" variant="outlined">
+            Logout
+          </Button>
+        ) : null}
       </Toolbar>
-    </AppBar>
+    </StyledNavbar>
   );
 };
 
-export default Navbar2;
+export default Navbar;

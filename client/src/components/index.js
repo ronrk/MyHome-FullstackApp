@@ -7,6 +7,9 @@ import ExpanseDashbaord from "./Expanse/ExpanseDashboard";
 import TaskDashboard from "./Task/TaskDashboard";
 import UserProfileDashboard from "./UserProfile/UserProfileDashboard";
 import MyHouseDashboard from "./MyHouse/MyHouseDashboard";
+import TaskPageHeader from "./Task/TaskPageHeader";
+import TaskPageActions from "./Task/TaskPageActions";
+import TaskPageContent from "./Task/TaskPageContent";
 
 export {
   Navbar,
@@ -18,4 +21,7 @@ export {
   TaskDashboard,
   UserProfileDashboard,
   MyHouseDashboard,
+  TaskPageActions,
+  TaskPageContent,
+  TaskPageHeader,
 };
