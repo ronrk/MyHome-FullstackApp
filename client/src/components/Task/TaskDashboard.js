@@ -1,58 +1,122 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Box from "@mui/material/Box";
-import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
-import Divider from "@mui/material/Divider";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import ArrowRight from "@mui/icons-material/ArrowRight";
-import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
-import Home from "@mui/icons-material/Home";
-import Settings from "@mui/icons-material/Settings";
-import People from "@mui/icons-material/People";
-import PermMedia from "@mui/icons-material/PermMedia";
-import Dns from "@mui/icons-material/Dns";
-import Public from "@mui/icons-material/Public";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  ButtonGroup,
+  Typography,
+  Tooltip,
+  IconButton,
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import AddTaskSharpIcon from "@mui/icons-material/AddTaskSharp";
+import AssignmentLateSharpIcon from "@mui/icons-material/AssignmentLateSharp";
+import EditSharpIcon from "@mui/icons-material/EditSharp";
 import DeleteIcon from "@mui/icons-material/Delete";
-import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import { Tab, Tabs, Typography } from "@mui/material";
+import TaskAltSharpIcon from "@mui/icons-material/TaskAltSharp";
+
+import LoadingSpinner from "../UI/LoadingSpinner.js";
 
 import { useTaskContext } from "../../context/task-context.js";
 import { useAuthContext } from "../../context/auth-context";
 
-import FormatListBulletedSharpIcon from "@mui/icons-material/FormatListBulletedSharp";
-import AddTaskSharpIcon from "@mui/icons-material/AddTaskSharp";
-
-const TaskDashboard = () => {
-  const [open, setOpen] = React.useState(true);
+const TaskDashboard = ({ loading }) => {
   const { tasks, editTask, getAllTasks } = useTaskContext();
   const { user } = useAuthContext();
-  const [value, setValue] = useState(0);
-  const [filterValue, setFilterValue] = useState("all");
+  const [expanded, setExpanded] = useState(false);
 
-  const handleChange = (event, newValue) => {
-    const newFilter = event.target.textContent.toLowerCase();
-    setFilterValue(() => {
-      if (newFilter === "completed") {
-        return "done";
-      }
-      if (newFilter === "active") {
-        return "pending";
-      }
-      if (newFilter === "all tasks") {
-        return "all";
-      }
-    });
-    setValue(newValue);
+  const handleStatusChange = () => {
+    // editTask({ name, status, _id }, user.token);
   };
 
-  return <Box sx={{ display: "flex" }}>TASK DASHBOARD SECTION</Box>;
+  const handleAccordionChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  return (
+    <Box mt={3} bgcolor="#eee" p={1} borderRadius={2}>
+      <Typography
+        variant="h3"
+        fontFamily="'Kenia', cursive"
+        color="secondary.dark"
+      >
+        Tasks
+        <Button
+          variant="contained"
+          endIcon={<AddTaskSharpIcon />}
+          component={Link}
+          to="/home/tasks/create-new"
+          sx={{ textTransform: "capitalize", ml: 3 }}
+          size="small"
+        >
+          Add New Task
+        </Button>
+      </Typography>
+
+      {tasks.slice(0, 5).map((task, idx) => {
+        const { status, _id, name } = task;
+        return (
+          <Accordion
+            key={_id}
+            expanded={expanded === "panel" + (idx + 1)}
+            onChange={handleAccordionChange("panel" + (idx + 1))}
+            sx={{ bgcolor: "primary.withOpacity" }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls={`panel${idx + 1}bh-content`}
+              id={`panel${idx + 1}bh-header`}
+              sx={{ display: "flex", alignItems: "center" }}
+            >
+              <Typography textTransform="capitalize">{task.name}</Typography>
+            </AccordionSummary>
+            <AccordionDetails
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "baseline",
+                justifyContent: "center",
+                gap: 3,
+              }}
+            >
+              <ButtonGroup size="small" sx={{ mt: 1 }}>
+                <Button endIcon={<EditSharpIcon />}>Edit</Button>
+                <Button startIcon={<DeleteIcon />}>Delete</Button>
+              </ButtonGroup>
+
+              <Tooltip
+                sx={{ alignSelf: "flex-end" }}
+                title={
+                  status === "done" ? "Mark as Active" : "Mark as Complete"
+                }
+              >
+                <IconButton onClick={handleStatusChange}>
+                  {status === "done" ? (
+                    <TaskAltSharpIcon color="success" />
+                  ) : (
+                    <AssignmentLateSharpIcon
+                      fontSize="small"
+                      sx={{
+                        color: "primary.dark",
+                        "&:hover": { color: "success.main" },
+                      }}
+                    />
+                  )}
+                </IconButton>
+              </Tooltip>
+            </AccordionDetails>
+          </Accordion>
+        );
+      })}
+    </Box>
+  );
 };
 
 export default TaskDashboard;

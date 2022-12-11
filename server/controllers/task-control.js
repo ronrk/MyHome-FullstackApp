@@ -3,18 +3,17 @@ const { BadRequestError } = require("../errors");
 const Task = require("../models/Task");
 
 const getAllTasks = async (req, res) => {
-  console.log(req.query);
   const { status } = req.query;
   let tasks;
   if (status === "all") {
     tasks = await Task.find({
       createdBy: req.user.userId,
-    }).sort("createdAt");
+    }).sort("-createdAt");
   } else {
     tasks = await Task.find({
       createdBy: req.user.userId,
       status: req.query.status,
-    }).sort("createdAt");
+    }).sort("-createdAt");
   }
 
   res.status(StatusCodes.OK).json({ tasks });

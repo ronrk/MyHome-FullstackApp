@@ -23,6 +23,14 @@ const UserSchema = mongoose.Schema({
     required: [true, "Please provide a password"],
     minlength: 6,
   },
+  friendList: {
+    type: [mongoose.Types.ObjectId],
+    ref: "User",
+  },
+  friendRequest: {
+    type: [mongoose.Types.ObjectId],
+    ref: "User",
+  },
 });
 
 UserSchema.pre("save", async function () {

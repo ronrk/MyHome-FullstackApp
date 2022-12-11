@@ -1,20 +1,41 @@
-import * as React from "react";
-import PropTypes from "prop-types";
-import Box from "@mui/material/Box";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import React from "react";
+import { Link } from "react-router-dom";
+import { Paper, Typography, Button } from "@mui/material";
+import ExpanseChart from "./ExpanseChart";
+import AddShoppingCartSharpIcon from "@mui/icons-material/AddShoppingCartSharp";
 
-const ExpanseDashbaord = () => {
-  return <Box>EXPANSE DASHBOARD SECTION</Box>;
+import { useExpanseContext } from "../../context/expanse-context";
+import LoadingSpinner from "../UI/LoadingSpinner";
+
+const ExpanseDashbaord = ({ loading }) => {
+  const { lastMonthsExpanses } = useExpanseContext();
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  return (
+    <Paper sx={{ bgcolor: "#eee", m: 1, p: 1 }} elevation={4}>
+      <Typography
+        variant="h3"
+        fontFamily="'Kenia', cursive"
+        color="secondary.dark"
+      >
+        Expanses{" "}
+        <Button
+          variant="contained"
+          endIcon={<AddShoppingCartSharpIcon />}
+          component={Link}
+          to="/home/tasks/create-new"
+          sx={{ textTransform: "capitalize", ml: 1 }}
+          size="small"
+        >
+          Add New Expanse
+        </Button>
+      </Typography>
+
+      <ExpanseChart lastMonthsExpanses={lastMonthsExpanses} />
+    </Paper>
+  );
 };
 export default ExpanseDashbaord;

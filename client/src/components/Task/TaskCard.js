@@ -7,6 +7,7 @@ import {
   ListItemText,
   styled,
   TextField,
+  Tooltip,
 } from "@mui/material";
 
 import DoneOutlineSharpIcon from "@mui/icons-material/DoneOutlineSharp";
@@ -48,39 +49,75 @@ const TaskCard = ({ name, status, _id }) => {
       <List>
         <ListItem
           secondaryAction={
-            <IconButton
-              edge="end"
-              aria-label="delete"
-              onClick={() => deleteTask(_id, user.token)}
+            <Tooltip
+              title={
+                status === "done"
+                  ? "Delete Completed task"
+                  : "Delete Active task"
+              }
             >
-              <DeleteIcon color="error" />
-            </IconButton>
+              <IconButton
+                edge="end"
+                aria-label="delete"
+                onClick={() => deleteTask(_id, user.token)}
+              >
+                <DeleteIcon
+                  color="primary"
+                  sx={{ "&:hover": { color: "error.main" } }}
+                />
+              </IconButton>
+            </Tooltip>
           }
         >
-          <IconButton onClick={handleStatusChange}>
-            {status === "done" ? (
-              <TaskAltSharpIcon color="success" />
-            ) : (
-              <AssignmentLateSharpIcon
-                fontSize="small"
-                sx={{ color: "primary.dark" }}
-              />
-            )}
-          </IconButton>
-          <IconButton
-            onClick={() =>
-              onNameEdit ? handleNameChange() : setOnNameEdit(true)
+          <Tooltip
+            title={status === "done" ? "Mark as Active" : "Mark as Complete"}
+          >
+            <IconButton onClick={handleStatusChange}>
+              {status === "done" ? (
+                <TaskAltSharpIcon color="success" />
+              ) : (
+                <AssignmentLateSharpIcon
+                  fontSize="small"
+                  sx={{
+                    color: "primary.dark",
+                    "&:hover": { color: "success.main" },
+                  }}
+                />
+              )}
+            </IconButton>
+          </Tooltip>
+          <Tooltip
+            title={
+              onNameEdit ? "Confirm Change" : "Edit Name(remark as active)"
             }
           >
-            {onNameEdit ? (
-              <ThumbUpAltSharpIcon color="success" />
-            ) : (
-              <EditSharpIcon color="tertiary" />
-            )}
-          </IconButton>
+            <IconButton
+              onClick={() =>
+                onNameEdit ? handleNameChange() : setOnNameEdit(true)
+              }
+            >
+              {onNameEdit ? (
+                <ThumbUpAltSharpIcon
+                  sx={{
+                    "&:hover": {
+                      color: "success.main",
+                    },
+                  }}
+                  color="darkBlue"
+                />
+              ) : (
+                <EditSharpIcon
+                  color="primary"
+                  sx={{ "&:hover": { color: "darkBlue.light" } }}
+                />
+              )}
+            </IconButton>
+          </Tooltip>
           {onNameEdit ? (
             <TextField
               id="standard-basic"
+              color="darkBlue"
+              sx={{ textTransform: "capitalize" }}
               label={name}
               variant="standard"
               value={value}
@@ -101,6 +138,9 @@ const TaskCard = ({ name, status, _id }) => {
                   "& .MuiListItemText-primary": {
                     color: "secondary.common",
                     textTransform: "capitalize",
+                    fontFamily: "'Zen Dots', cursive",
+                    fontSize: "1.3rem",
+                    letterSpacing: "-1px",
                   },
                 },
                 status === "done" && {

@@ -1,19 +1,16 @@
 import React from "react";
 
 import TaskCard from "./TaskCard";
+import LoadingSpinner from "../UI/LoadingSpinner";
 
-import { Box, CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
 
 import { useTaskContext } from "../../context/task-context";
 
 const TaskPageContent = ({ tasks }) => {
   const { loading } = useTaskContext();
   if (loading) {
-    return (
-      <Box sx={{ flexGrow: 1, maxWidth: 752, m: "auto auto" }}>
-        <CircularProgress color="purple" />
-      </Box>
-    );
+    return <LoadingSpinner />;
   }
 
   if (tasks.length <= 0) {
@@ -22,7 +19,7 @@ const TaskPageContent = ({ tasks }) => {
   return (
     <Box>
       {tasks.map((item) => (
-        <TaskCard key={item.label} {...item} />
+        <TaskCard key={item.name} {...item} />
       ))}
     </Box>
   );

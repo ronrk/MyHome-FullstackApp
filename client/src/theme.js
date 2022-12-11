@@ -34,9 +34,10 @@ export const theme = createTheme({
       light: "#e78afe",
     },
     darkBlue: {
-      main: "#0f0d96",
+      main: "#25238B",
       dark: "#0c0a78",
-      light: "#5756b6",
+      light: "#ABAAE6",
+      widhOpacity: "rgba(67.1, 66.7, 90.2,.3)",
     },
     error: {
       main: "#F51720",

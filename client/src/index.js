@@ -11,6 +11,8 @@ import AuthContextProvider from "./context/auth-context";
 import UIContextProvider from "./context/ui-context";
 import TaskContextProvider from "./context/task-context";
 import ExpanseContextProvider from "./context/expanse-context";
+import HousesContextProvider from "./context/houses-context";
+import UserContextProvider from "./context/user-context";
 import { ThemeProvider, CssBaseline, Container } from "@mui/material";
 
 const el = document.getElementById("root");
@@ -20,16 +22,20 @@ root.render(
   <UIContextProvider>
     <AuthContextProvider>
       <BrowserRouter>
-        <TaskContextProvider>
-          <ExpanseContextProvider>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-              {/* <TestMui /> */}
+        <UserContextProvider>
+          <TaskContextProvider>
+            <ExpanseContextProvider>
+              <HousesContextProvider>
+                <ThemeProvider theme={theme}>
+                  <CssBaseline />
+                  {/* <TestMui /> */}
 
-              <App />
-            </ThemeProvider>
-          </ExpanseContextProvider>
-        </TaskContextProvider>
+                  <App />
+                </ThemeProvider>
+              </HousesContextProvider>
+            </ExpanseContextProvider>
+          </TaskContextProvider>
+        </UserContextProvider>
       </BrowserRouter>
     </AuthContextProvider>
   </UIContextProvider>

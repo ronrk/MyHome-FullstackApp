@@ -9,14 +9,30 @@ const ExpanseContext = React.createContext();
 const initialState = {
   _expanses: [],
   expanses: [],
+  lastMonthsExpanses: [],
+  lastYearExpanses: [],
   totalExpanses: 0,
   loading: false,
   error: false,
+  numbersPerPage: 0,
 };
 
 const ExpanseContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const navigate = useNavigate();
+
+  const getCurrentYearExpenses = async (token) => {
+    dispatch({ type: "SET_LOADING" });
+    try {
+      const { data } = await authorizedFetch(token).get("/expanse/by-date");
+      dispatch({ type: "GET_EXPENSES_BY_DATE", payload: { ...data } });
+
+      dispatch({ type: "END_LOADING" });
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: "END_LOADING" });
+    }
+  };
 
   const getAllExpanses = async (token) => {
     try {
@@ -30,6 +46,7 @@ const ExpanseContextProvider = ({ children }) => {
       });
 
       dispatch({ type: "GET_ALL_EXPANSES", payload: expanses });
+      getCurrentYearExpenses(token);
       dispatch({ type: "END_LOADING" });
     } catch (error) {
       console.log(error);
@@ -49,7 +66,7 @@ const ExpanseContextProvider = ({ children }) => {
         },
       });
       dispatch({ type: "CREATE_NEW_EXPANSE", payload: expanse });
-      navigate("/expanses");
+      navigate("/home/expanses");
       dispatch({ type: "END_LOADING" });
     } catch (error) {
       console.log(error);
@@ -98,21 +115,9 @@ const ExpanseContextProvider = ({ children }) => {
       dispatch({ type: "END_LOADING" });
     }
   };
-  /* const deleteAllCompletedTasks = async (token) => {
-    try {
-      dispatch({ type: "SET_LOADING" });
-      const data = await axios.delete("http://localhost:5010/api/v1/task", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      getAllTasks(token, "all");
-      dispatch({ type: "END_LOADING" });
-    } catch (error) {
-      console.log(error);
-      dispatch({ type: "END_LOADING" });
-    }
-  }; */
+  const handleGetExpanses = (value) => {
+    dispatch({ type: "HANDLE_GET_EXPANSES", payload: value });
+  };
 
   return (
     <ExpanseContext.Provider
@@ -120,8 +125,10 @@ const ExpanseContextProvider = ({ children }) => {
         ...state,
         createNewExpanse,
         getAllExpanses,
+        getCurrentYearExpenses,
         editExpanse,
         deleteExpanse,
+        handleGetExpanses,
         // deleteAllCompletedExpanses,
       }}
     >

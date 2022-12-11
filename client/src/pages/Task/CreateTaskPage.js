@@ -6,6 +6,8 @@ import { useTaskContext } from "../../context/task-context";
 import { BpCheckbox } from "../../components";
 import AddTaskSharpIcon from "@mui/icons-material/AddTaskSharp";
 
+import CreateNewItemPage from "../../components/UI/CreateNewItemPage";
+
 import {
   Typography,
   Avatar,
@@ -42,7 +44,45 @@ const CreateTaskPage = () => {
       return { ...prev, [name]: value };
     });
   };
+
   return (
+    <CreateNewItemPage
+      headerIcon={<AddTaskSharpIcon />}
+      headerTitle="Create new Task"
+      submitHandler={handleSubmit}
+    >
+      <TextField
+        margin="normal"
+        required
+        autoFocus
+        label="Task Title"
+        autoComplete="name"
+        id="name"
+        name="name"
+        onChange={handleChange}
+        value={values.name}
+        sx={{ flexGrow: 1 }}
+      />
+      <FormControlLabel
+        control={
+          <BpCheckbox
+            value="status"
+            color="primary"
+            name="status"
+            id="status"
+            onChange={handleChange}
+          />
+        }
+        label="completed"
+      />
+    </CreateNewItemPage>
+  );
+};
+
+export default CreateTaskPage;
+
+/* 
+
     <Paper
       elevation={20}
       sx={{
@@ -121,7 +161,5 @@ const CreateTaskPage = () => {
         </Box>
       </Box>
     </Paper>
-  );
-};
 
-export default CreateTaskPage;
+*/

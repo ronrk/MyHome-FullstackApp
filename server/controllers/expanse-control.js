@@ -1,11 +1,73 @@
 const Expanse = require("../models/Expanse");
+const mongoose = require("mongoose");
 const { StatusCodes } = require("http-status-codes");
 const { NotFoundError, BadRequestError } = require("../errors");
+const moment = require("moment");
 
 const getAllExpanses = async (req, res) => {
   const expanses = await Expanse.find({ createdBy: req.user.userId });
 
   res.status(StatusCodes.OK).json({ expanses });
+};
+
+const getExpansesByDate = async (req, res) => {
+  let expansesByDate = await Expanse.aggregate([
+    { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
+    {
+      $group: {
+        _id: { year: { $year: "$createdAt" }, month: { $month: "$createdAt" } },
+        count: { $sum: 1 },
+        totalCost: { $sum: "$value" },
+      },
+    },
+    { $sort: { "_id.year": -1, "_id.month": -1 } },
+    { $limit: 6 },
+  ]);
+
+  expansesByDate = expansesByDate.map((item) => {
+    const {
+      _id: { year, month },
+      count,
+      totalCost,
+    } = item;
+
+    const date = moment()
+      .year(year)
+      .month(month - 1)
+      .format("MMM Y");
+
+    return { date, count, totalCost };
+  });
+
+  const currentYear = new Date().getFullYear();
+
+  let lastYearExpenses = await Expanse.aggregate([
+    { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
+    {
+      $group: {
+        _id: { year: { $year: "$createdAt" } },
+        count: { $sum: 1 },
+        totalCost: { $sum: "$value" },
+      },
+    },
+    { $sort: { "_id.year": -1 } },
+  ]);
+
+  lastYearExpenses = lastYearExpenses.map((item) => {
+    const {
+      _id: { year },
+      count,
+      totalCost,
+    } = item;
+
+    if (year === currentYear) {
+      return { year, count, totalCost };
+    } else {
+      return;
+    }
+  });
+
+  res.status(StatusCodes.OK).json({ expansesByDate, lastYearExpenses });
 };
 
 const createExpanse = async (req, res) => {
@@ -67,4 +129,5 @@ module.exports = {
   getExpanse,
   updateExpanse,
   deleteExpanse,
+  getExpansesByDate,
 };

@@ -46,7 +46,7 @@ const TaskContextProvider = ({ children }) => {
         },
       });
       dispatch({ type: "CREATE_NEW_TASK", payload: task });
-      navigate("/tasks?status=all");
+      navigate("/home/tasks?status=all");
       dispatch({ type: "END_LOADING" });
     } catch (error) {
       console.log(error);

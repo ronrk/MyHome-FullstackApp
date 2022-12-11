@@ -9,6 +9,7 @@ import ExpansePage from "./Expanse/ExpansePage";
 import NotFoundPage from "./NotFoundPage";
 import UserUpdatePage from "./User/UserUpdatePage";
 import WelcomePage from "./WelcomePage";
+import SearchNewUserPage from "./User/SearchNewUserPage";
 
 export {
   LoginPage,
@@ -22,4 +23,5 @@ export {
   NotFoundPage,
   UserUpdatePage,
   WelcomePage,
+  SearchNewUserPage,
 };
