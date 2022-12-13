@@ -4,13 +4,14 @@ const mockData = require("./MOCK_DATA.json");
 
 const Expanse = require("./models/Expanse");
 const User = require("./models/User");
+const Task = require("./models/Task");
 const connectDB = require("./db/connectDB");
 
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
 
-    await User.create(mockData);
+    await Expanse.create(mockData);
     console.log("success");
 
     process.exit(0);

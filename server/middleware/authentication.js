@@ -1,21 +1,34 @@
-const jwt = require("jsonwebtoken");
-const { UnauthenticatedError } = require("../errors");
+const CustomError = require("../errors");
+const { isTokenValid } = require("../utils");
 
-const auth = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    throw new UnauthenticatedError("Authentication invalid");
+const authenticateUser = async (req, res, next) => {
+  const token = req.signedCookies.token;
+  if (!token) {
+    throw new CustomError.UnauthenticatedError(
+      "Autentication Invalid:no token"
+    );
   }
-  const token = authHeader.split(" ")[1];
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = { userId: payload.userId, name: payload.name };
+    const { name, userId, role } = isTokenValid({ token });
+    req.user = { name, userId, role };
     next();
   } catch (error) {
-    throw new UnauthenticatedError("Authentication invalid");
+    throw new CustomError.UnauthenticatedError(
+      "Authentication invalid:token not valid"
+    );
   }
 };
 
-module.exports = auth;
+const authorizePermissions = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      throw new CustomError.UnauthorizedError(
+        "Unaothorized to access this route"
+      );
+    }
+    next();
+  };
+};
+
+module.exports = { authenticateUser, authorizePermissions };
