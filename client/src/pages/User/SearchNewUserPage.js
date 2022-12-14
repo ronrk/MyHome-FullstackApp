@@ -1,24 +1,21 @@
 import React, { useState } from "react";
 import { Paper, TextField, Typography, Box } from "@mui/material";
 
-import { useHousesContext } from "../../context/houses-context";
-import { useAuthContext } from "../../context/auth-context";
-
 import LoadingSpinner from "../../components/UI/LoadingSpinner";
 import { AddNewUserCard } from "../../components";
 
+import { useSocialContext } from "../../context/social-context";
+
 const SearchNewUserPage = () => {
   const [searchResult, setSearchResult] = useState([]);
-  const { searchNewUser, loading } = useHousesContext();
-  const { user } = useAuthContext();
+  const { searchNewUser, socialLoading } = useSocialContext();
 
   const handleSearch = async (e) => {
     try {
       if (e.target.value === "") {
         setSearchResult([]);
       }
-      const users = await searchNewUser(user.token, e.target.value);
-      console.log(users);
+      const users = await searchNewUser(e.target.value);
       setSearchResult((prev) => [...users]);
     } catch (error) {}
   };
@@ -47,7 +44,7 @@ const SearchNewUserPage = () => {
         />
       </Box>
       <Box display="flex" flexWrap="wrap" gap={3}>
-        {loading ? (
+        {socialLoading ? (
           <LoadingSpinner />
         ) : (
           searchResult.map((user) => (

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Backdrop,
   Paper,
@@ -10,14 +10,37 @@ import {
   FormControl,
   ButtonGroup,
 } from "@mui/material";
+import { useSocialContext } from "../../context/social-context";
 import { useUserContext } from "../../context/user-context";
-import { useAuthContext } from "../../context/auth-context";
+import { Link } from "react-router-dom";
 
 const FriendRequest = ({ handleClose, open, user }) => {
-  const { sendFriendRequest } = useUserContext();
-  const {
-    user: { token },
-  } = useAuthContext();
+  const { sendFriendRequest, cancelFriendRequest, removeFriend } =
+    useSocialContext();
+  const { userProfile } = useUserContext();
+  const [status, setStatus] = useState("new");
+
+  useEffect(() => {
+    if (userProfile.pendingFriendRequest.includes(user._id)) {
+      setStatus("cancel");
+    }
+    if (userProfile.friendList.includes(user._id)) {
+      setStatus("remove");
+    }
+  }, [status]);
+
+  const handleClick = () => {
+    if (status === "new") {
+      sendFriendRequest({ toUser: user._id });
+    }
+    if (status === "cencel") {
+      cancelFriendRequest();
+    }
+    if (status === "remove") {
+      removeFriend();
+    }
+  };
+
   return (
     <Backdrop
       open={open}
@@ -25,10 +48,13 @@ const FriendRequest = ({ handleClose, open, user }) => {
     >
       <Paper
         sx={{
-          minWidth: "60%",
+          minWidth: "40%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          p: 3,
+          pt: 5,
+          borderRadius: 2,
         }}
       >
         <Typography
@@ -38,7 +64,11 @@ const FriendRequest = ({ handleClose, open, user }) => {
           textTransform="uppercase"
           mb={4}
         >
-          Send New Friend Request
+          {status === "new"
+            ? "Send New Friend Request"
+            : status === "cancel"
+            ? "Cancel Friend Request"
+            : "Remove Friend From List"}
         </Typography>
         <Box
           component="form"
@@ -48,21 +78,26 @@ const FriendRequest = ({ handleClose, open, user }) => {
           sx={{ m: "0 auto" }}
         >
           <FormControl>
-            <Typography variant="body2">Optional message</Typography>
+            <Typography variant="body2" sx={{ m: 1, mb: 2 }}>
+              Optional message
+            </Typography>
             <TextField label="Subject" placeholder={`Hello ${user.name}`} />
           </FormControl>
-          <TextareaAutosize
-            minRows={8}
-            placeholder={`Hi ${user.name}, nice to meet you... `}
-          />
+          <TextareaAutosize minRows={8} placeholder={`Hi ${user.name} ... `} />
         </Box>
         <ButtonGroup sx={{ m: 2 }}>
           <Button
             variant="contained"
             color="secondary"
-            onClick={() => sendFriendRequest(token, user._id)}
+            compononet={Link}
+            to="/user/search-new"
+            onClick={handleClick}
           >
-            Send Request
+            {status === "new"
+              ? "Send Request"
+              : status === "cancel"
+              ? "Cancel Request"
+              : "Remove Friend"}
           </Button>
           <Button variant="text" color="error" onClick={handleClose}>
             Cancel

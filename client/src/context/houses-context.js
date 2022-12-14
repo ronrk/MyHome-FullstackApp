@@ -1,10 +1,15 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { authorizedFetch } from "../utils/axios";
 
 const housesContext = React.createContext();
 
 const HousesContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    console.log("HOUSES EFFECT");
+  }, []);
+
   const searchNewUser = async (token, query) => {
     try {
       setLoading(true);

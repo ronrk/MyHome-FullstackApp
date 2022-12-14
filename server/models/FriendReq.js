@@ -14,7 +14,7 @@ const FriendRequestSchema = mongoose.Schema({
   status: {
     type: String,
     enum: {
-      values: ["pending", "reject", "accepted"],
+      values: ["pending", "reject", "accept"],
       message: "{VALUE} is not support",
     },
     required: true,

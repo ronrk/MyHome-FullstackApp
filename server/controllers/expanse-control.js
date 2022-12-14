@@ -5,7 +5,9 @@ const { NotFoundError, BadRequestError } = require("../errors");
 const moment = require("moment");
 
 const getAllExpanses = async (req, res) => {
-  const expanses = await Expanse.find({ createdBy: req.user.userId });
+  const expanses = await Expanse.find({ createdBy: req.user.userId }).sort(
+    "-createdAt"
+  );
 
   res.status(StatusCodes.OK).json({ expanses });
 };
@@ -24,20 +26,22 @@ const getExpansesByDate = async (req, res) => {
     { $limit: 6 },
   ]);
 
-  expansesByDate = expansesByDate.map((item) => {
-    const {
-      _id: { year, month },
-      count,
-      totalCost,
-    } = item;
+  expansesByDate = expansesByDate
+    .map((item) => {
+      const {
+        _id: { year, month },
+        count,
+        totalCost,
+      } = item;
 
-    const date = moment()
-      .year(year)
-      .month(month - 1)
-      .format("MMM Y");
+      const date = moment()
+        .year(year)
+        .month(month - 1)
+        .format("MMM Y");
 
-    return { date, count, totalCost };
-  });
+      return { date, count, totalCost };
+    })
+    .reverse();
 
   const currentYear = new Date().getFullYear();
 

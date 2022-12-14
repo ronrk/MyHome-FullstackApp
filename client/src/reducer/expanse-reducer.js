@@ -5,10 +5,6 @@ const expanseReducer = (state, action) => {
   if (action.type === "END_LOADING") {
     return { ...state, loading: false };
   }
-  if (action.type === "CREATE_NEW_EXPANSE") {
-    console.log(action.payload);
-    return state;
-  }
   if (action.type === "GET_ALL_EXPANSES") {
     return {
       ...state,
@@ -17,7 +13,6 @@ const expanseReducer = (state, action) => {
     };
   }
   if (action.type === "GET_EXPENSES_BY_DATE") {
-    console.log(action.payload);
     const { expansesByDate, lastYearExpenses } = action.payload;
     return {
       ...state,
@@ -25,11 +20,6 @@ const expanseReducer = (state, action) => {
       lastMonthsExpanses: expansesByDate,
     };
   }
-  if (action.type === "EDIT_EXPANSE") {
-    console.log(action.payload);
-    return state;
-  }
-
   if (action.type === "HANDLE_GET_EXPANSES") {
     console.log(action.payload);
     let newExpanses = [];
@@ -38,9 +28,6 @@ const expanseReducer = (state, action) => {
     } else {
       newExpanses = state._expanses.slice(0, action.payload);
     }
-
-    console.log(state._expanses);
-    console.log(newExpanses);
     return { ...state, expanses: newExpanses };
   }
 

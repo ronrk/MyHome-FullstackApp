@@ -11,16 +11,20 @@ import { Grid, Paper } from "@mui/material";
 
 import { useExpanseContext } from "../context/expanse-context";
 import { useTaskContext } from "../context/task-context";
-import { useAuthContext } from "../context/auth-context";
+import { useUserContext } from "../context/user-context";
+import { useSocialContext } from "../context/social-context";
 
 const Dashbord = () => {
-  const { getAllExpanses, loading: loadingExpanses } = useExpanseContext();
-  const { getAllTasks, loading: loaingTasks } = useTaskContext();
-  const { user } = useAuthContext();
+  const { getAllExpanses, expanseLoading } = useExpanseContext();
+  const { getAllTasks, taskLoading } = useTaskContext();
+  const { getCurrentUser } = useUserContext();
+  const { getAllFriendListUser } = useSocialContext();
 
   useEffect(() => {
-    getAllExpanses(user.token);
-    getAllTasks(user.token, "all");
+    console.log("DASHBOARD");
+    getAllTasks();
+    getAllExpanses();
+    getAllFriendListUser();
   }, []);
   return (
     <Paper sx={{ display: "flex", gap: 3, m: 3, mt: 2, p: 1 }}>
@@ -29,15 +33,15 @@ const Dashbord = () => {
           <UserProfileDashboard />
         </Grid>
         <Grid item>
-          <TaskDashboard loading={loadingExpanses} />
+          <TaskDashboard loading={taskLoading} />
         </Grid>
       </Grid>
-      <Grid container direction="column" width="60%">
+      <Grid container direction="column" width="60%" sx={{ m: "2rem auto" }}>
         <Grid item>
           <MyHouseDashboard />
         </Grid>
         <Grid item>
-          <ExpanseDashbaord loading={loadingExpanses} />
+          <ExpanseDashbaord loading={expanseLoading} />
         </Grid>
       </Grid>
     </Paper>

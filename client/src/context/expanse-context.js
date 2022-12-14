@@ -1,7 +1,7 @@
-import React, { useContext, useReducer } from "react";
+import React, { useContext, useReducer, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 
-import { authorizedFetch } from "../utils/axios";
+import { customFetch } from "../utils/axios";
 import reducer from "../reducer/expanse-reducer";
 
 const ExpanseContext = React.createContext();
@@ -19,100 +19,82 @@ const initialState = {
 
 const ExpanseContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [expanseLoading, setExpanseLoading] = useState(false);
   const navigate = useNavigate();
 
-  const getCurrentYearExpenses = async (token) => {
-    dispatch({ type: "SET_LOADING" });
+  useEffect(() => {
+    console.log("EXPANSE EFFECT");
+  }, []);
+
+  const getCurrentYearExpenses = async () => {
+    setExpanseLoading(true);
     try {
-      const { data } = await authorizedFetch(token).get("/expanse/by-date");
+      const { data } = await customFetch.get("/expanse/by-date");
       dispatch({ type: "GET_EXPENSES_BY_DATE", payload: { ...data } });
 
-      dispatch({ type: "END_LOADING" });
+      setExpanseLoading(false);
     } catch (error) {
       console.log(error);
-      dispatch({ type: "END_LOADING" });
+      setExpanseLoading(false);
     }
   };
 
-  const getAllExpanses = async (token) => {
+  const getAllExpanses = async () => {
     try {
-      dispatch({ type: "SET_LOADING" });
+      setExpanseLoading(true);
       const {
         data: { expanses },
-      } = await authorizedFetch(token).get(`/expanse`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      } = await customFetch.get(`/expanse`);
 
       dispatch({ type: "GET_ALL_EXPANSES", payload: expanses });
-      getCurrentYearExpenses(token);
-      dispatch({ type: "END_LOADING" });
+      getCurrentYearExpenses();
+      setExpanseLoading(false);
     } catch (error) {
       console.log(error);
-      dispatch({ type: "END_LOADING" });
+      setExpanseLoading(false);
     }
   };
 
-  const createNewExpanse = async (newExpanse, token) => {
+  const createNewExpanse = async (newExpanse) => {
     try {
-      dispatch({ type: "SET_LOADING" });
+      setExpanseLoading(true);
 
-      const {
-        data: { expanse },
-      } = await authorizedFetch(token).post("/expanse", newExpanse, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      dispatch({ type: "CREATE_NEW_EXPANSE", payload: expanse });
+      await customFetch.post("/expanse", newExpanse);
       navigate("/home/expanses");
-      dispatch({ type: "END_LOADING" });
+      setExpanseLoading(false);
     } catch (error) {
       console.log(error);
-      dispatch({ type: "END_LOADING" });
+      setExpanseLoading(false);
     }
   };
 
-  const editExpanse = async (updatedExpanse, token) => {
+  const editExpanse = async (updatedExpanse) => {
     let { _id, name, value, bills } = updatedExpanse;
 
     try {
       dispatch({ type: "SET_LOADING" });
-      const { data } = await authorizedFetch(token).patch(
-        `/expanse/${_id}`,
-        { name, value, bills },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      dispatch({ type: "EDIT_EXPANSE", payload: data });
-      getAllExpanses(token);
-      dispatch({ type: "END_LOADING" });
+      await customFetch.patch(`/expanse/${_id}`, {
+        name,
+        value,
+        bills,
+      });
+      getAllExpanses();
+      setExpanseLoading(false);
     } catch (error) {
       console.log(error);
-      dispatch({ type: "END_LOADING" });
+      setExpanseLoading(false);
     }
   };
 
-  const deleteExpanse = async (expanseId, token) => {
+  const deleteExpanse = async (expanseId) => {
     try {
-      dispatch({ type: "SET_LOADING" });
-      const data = await authorizedFetch(token).delete(
-        "/expanse/" + expanseId,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      getAllExpanses(token);
-      dispatch({ type: "END_LOADING" });
+      setExpanseLoading(false);
+      await customFetch.delete("/expanse/" + expanseId);
+      getAllExpanses();
+      setExpanseLoading(false);
     } catch (error) {
       console.log(error);
-      dispatch({ type: "END_LOADING" });
+      setExpanseLoading(false);
     }
   };
   const handleGetExpanses = (value) => {
@@ -129,6 +111,7 @@ const ExpanseContextProvider = ({ children }) => {
         editExpanse,
         deleteExpanse,
         handleGetExpanses,
+        expanseLoading,
         // deleteAllCompletedExpanses,
       }}
     >

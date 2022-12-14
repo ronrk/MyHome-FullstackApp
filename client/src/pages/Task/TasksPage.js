@@ -5,20 +5,22 @@ import { useLocation } from "react-router-dom";
 import { Divider, Typography } from "@mui/material";
 
 import { useTaskContext } from "../../context/task-context";
-import { useAuthContext } from "../../context/auth-context";
 
 import ItemPage from "../../components/UI/ItemPage";
 
 import { TaskPageActions, TaskPageContent } from "../../components";
+import { useUserContext } from "../../context/user-context";
 
 const TasksPage = () => {
   const { getAllTasks, tasks } = useTaskContext();
-  const { user } = useAuthContext();
+  const { user } = useUserContext();
   let query = useQuery();
 
   useEffect(() => {
+    console.log("TASKPAGE");
     if (user) {
-      getAllTasks(user.token, query.get("status"));
+      console.log("Task page use effect");
+      getAllTasks(query.get("status"));
     }
   }, [query]);
 
@@ -39,7 +41,7 @@ const TasksPage = () => {
     >
       <TaskPageActions filter={query.get("status")} />
       <Divider />
-      <TaskPageContent tasks={tasks} />
+      <TaskPageContent tasks={tasks} filter={query.get("status")} />
     </ItemPage>
   );
 };

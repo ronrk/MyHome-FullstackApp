@@ -23,7 +23,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    throw new BadRequestError("Please provide email and password");
+    throw new CustomError.BadRequestError("Please provide email and password");
   }
 
   const user = await User.findOne({ email });
@@ -34,7 +34,7 @@ const login = async (req, res) => {
   const isPasswordCorrect = await user.comparePassword(password);
 
   if (!isPasswordCorrect) {
-    throw new UnauthenticatedError("Wrong password");
+    throw new CustomError.UnauthenticatedError("Wrong password");
   }
   const tokenUser = createUserToken({ user });
   attachCookiesToResponse({ res, user: tokenUser });

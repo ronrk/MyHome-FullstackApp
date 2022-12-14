@@ -3,8 +3,6 @@ export const rememberUserOnLocaleStorage = (user) => {
 };
 
 export const getUserFromLocaleStorage = () => {
-  console.log(localStorage.getItem("user"));
-
   return localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;

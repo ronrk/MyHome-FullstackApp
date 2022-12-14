@@ -1,7 +1,7 @@
-import React, { useContext, useReducer } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router";
 
-import { authorizedFetch } from "../utils/axios";
+import { customFetch } from "../utils/axios";
 import reducer from "../reducer/task-reducer";
 
 const TaskContext = React.createContext();
@@ -10,103 +10,84 @@ const initialState = {
   _tasks: [],
   tasks: [],
   totalTasks: 0,
-  loading: false,
   error: false,
 };
 
 const TaskContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [taskLoading, setTaskLoading] = useState(false);
   const navigate = useNavigate();
 
-  const getAllTasks = async (token, query) => {
+  useEffect(() => {
+    console.log("TASK EFFECT");
+  }, []);
+
+  const getAllTasks = async (query = "all") => {
+    setTaskLoading(true);
     try {
-      dispatch({ type: "SET_LOADING" });
       const {
         data: { tasks },
-      } = await authorizedFetch(token).get(`/task?status=${query}`);
+      } = await customFetch.get(`/task?status=${query}`);
 
       dispatch({ type: "GET_ALL_TASKS", payload: tasks });
-      dispatch({ type: "END_LOADING" });
+      setTaskLoading(false);
     } catch (error) {
       console.log(error);
-      dispatch({ type: "END_LOADING" });
+      setTaskLoading(false);
     }
   };
 
-  const createNewTask = async (newTask, token) => {
+  const createNewTask = async (newTask) => {
     try {
-      dispatch({ type: "SET_LOADING" });
+      setTaskLoading(true);
       newTask.status = newTask.status === true ? "done" : "pending";
-
-      const {
-        data: { task },
-      } = await authorizedFetch(token).post("/task", newTask, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      dispatch({ type: "CREATE_NEW_TASK", payload: task });
+      await customFetch.post("/task", newTask);
       navigate("/home/tasks?status=all");
-      dispatch({ type: "END_LOADING" });
+      setTaskLoading(false);
     } catch (error) {
       console.log(error);
-      dispatch({ type: "END_LOADING" });
+      setTaskLoading(false);
     }
   };
 
-  const editTask = async (updatedTask, token) => {
+  const editTask = async (updatedTask, query = "all") => {
+    setTaskLoading(true);
     let { _id, name, status } = updatedTask;
 
-    status = status === "pending" ? "done" : "pending";
-
     try {
-      dispatch({ type: "SET_LOADING" });
-      const { data } = await authorizedFetch(token).patch(
-        `/task/${_id}`,
-        { name, status },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      dispatch({ type: "EDIT_TASK", payload: data });
-      getAllTasks(token, "all");
-      dispatch({ type: "END_LOADING" });
+      await customFetch.patch(`/task/${_id}`, {
+        name,
+        status,
+      });
+      await getAllTasks(query);
+      setTaskLoading(false);
     } catch (error) {
       console.log(error);
-      dispatch({ type: "END_LOADING" });
+      setTaskLoading(false);
     }
   };
 
-  const deleteTask = async (taskId, token) => {
+  const deleteTask = async (taskId, query) => {
+    setTaskLoading(true);
     try {
-      dispatch({ type: "SET_LOADING" });
-      const data = await authorizedFetch(token).delete("/task/" + taskId, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      getAllTasks(token, "all");
-      dispatch({ type: "END_LOADING" });
+      await customFetch.delete("/task/" + taskId);
+
+      await getAllTasks(query);
+      setTaskLoading(false);
     } catch (error) {
       console.log(error);
-      dispatch({ type: "END_LOADING" });
+      setTaskLoading(false);
     }
   };
-  const deleteAllCompletedTasks = async (token) => {
+  const deleteAllCompletedTasks = async () => {
+    setTaskLoading(true);
     try {
-      dispatch({ type: "SET_LOADING" });
-      const data = await authorizedFetch(token).delete("/task", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      getAllTasks(token, "all");
-      dispatch({ type: "END_LOADING" });
+      await customFetch.delete("/task");
+      navigate("/home/tasks?status=all");
+      setTaskLoading(false);
     } catch (error) {
       console.log(error);
-      dispatch({ type: "END_LOADING" });
+      setTaskLoading(false);
     }
   };
 
@@ -119,6 +100,7 @@ const TaskContextProvider = ({ children }) => {
         editTask,
         deleteTask,
         deleteAllCompletedTasks,
+        taskLoading,
       }}
     >
       {children}

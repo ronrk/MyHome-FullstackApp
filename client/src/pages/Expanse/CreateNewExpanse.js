@@ -2,7 +2,6 @@ import React, { useState } from "react";
 
 import CreateNewItemPage from "../../components/UI/CreateNewItemPage";
 
-import { useAuthContext } from "../../context/auth-context";
 import { useExpanseContext } from "../../context/expanse-context";
 
 import AddShoppingCartSharpIcon from "@mui/icons-material/AddShoppingCartSharp";
@@ -11,13 +10,12 @@ import { TextField } from "@mui/material";
 
 const CreateNewExpansePage = () => {
   const [values, setValues] = useState({ name: "", value: 0, bills: 0 });
-  const { user } = useAuthContext();
   const { createNewExpanse } = useExpanseContext();
 
   const handleSubmit = (e) => {
     console.log("submit");
     e.preventDefault();
-    createNewExpanse(values, user.token);
+    createNewExpanse(values);
   };
 
   const handleChange = (e) => {

@@ -10,9 +10,11 @@ import NotFoundPage from "./NotFoundPage";
 import UserUpdatePage from "./User/UserUpdatePage";
 import WelcomePage from "./WelcomePage";
 import SearchNewUserPage from "./User/SearchNewUserPage";
+import ChangePasswordPage from "./User/ChangePasswordPage";
 
 export {
   LoginPage,
+  ChangePasswordPage,
   AuthWrapper,
   Dashboard,
   TasksPage,

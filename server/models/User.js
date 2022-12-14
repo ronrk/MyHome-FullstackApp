@@ -24,6 +24,23 @@ const UserSchema = mongoose.Schema(
       required: [true, "Please provide a password"],
       minlength: 6,
     },
+    city: {
+      type: String,
+      minlength: [3, "City must be longer than 3 char"],
+    },
+    state: {
+      type: String,
+      minlength: [2, "State must be longer than 2 char"],
+    },
+    website: {
+      type: String,
+      minlength: [5, "Website must be longer than 5 char"],
+    },
+    description: {
+      type: String,
+      minlength: [5, "Description must be longer than 2 char"],
+      maxlength: [1000, "Description cant be longer than 1000 char"],
+    },
     role: {
       type: String,
       enum: ["user", "admin"],
@@ -40,6 +57,9 @@ const UserSchema = mongoose.Schema(
     pendingFriendRequest: {
       type: [mongoose.Types.ObjectId],
       ref: "User",
+    },
+    image: {
+      type: String,
     },
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useAuthContext } from "./auth-context";
 
 const UIContext = React.createContext();
@@ -6,16 +6,20 @@ const UIContext = React.createContext();
 const UIContextProvider = ({ children }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [drawerWidth, setDrawerWidth] = useState(240);
-  const [userMenuAnchorElement, setUserMenuAnchorElement] = useState(null);
-  const open = Boolean(userMenuAnchorElement);
+  const [actionsMenuAnchorElement, setActionsMenuAnchorElement] =
+    useState(null);
+  const open = Boolean(actionsMenuAnchorElement);
 
-  const handleOpenUserMenu = (event) => {
-    console.log(event.currentTarget);
-    setUserMenuAnchorElement(event.currentTarget);
+  useEffect(() => {
+    console.log("UI EFFECT");
+  }, []);
+
+  const handleOpenActionsMenu = (event) => {
+    setActionsMenuAnchorElement(event.currentTarget);
   };
 
-  const handleCloseUserMenu = () => {
-    setUserMenuAnchorElement(null);
+  const handleCloseActionsMenu = () => {
+    setActionsMenuAnchorElement(null);
   };
 
   const toggleDrawer = () => {
@@ -28,9 +32,9 @@ const UIContextProvider = ({ children }) => {
         isDrawerOpen,
         toggleDrawer,
         drawerWidth,
-        handleOpenUserMenu,
-        handleCloseUserMenu,
-        userMenuAnchorElement,
+        handleOpenActionsMenu,
+        handleCloseActionsMenu,
+        actionsMenuAnchorElement,
         open,
       }}
     >

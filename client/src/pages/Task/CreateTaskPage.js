@@ -23,12 +23,11 @@ import {
 
 const CreateTaskPage = () => {
   const [values, setValues] = useState({ name: "", status: false });
-  const { user } = useAuthContext();
   const { createNewTask } = useTaskContext();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    createNewTask(values, user.token);
+    createNewTask(values);
   };
 
   const handleChange = (e) => {

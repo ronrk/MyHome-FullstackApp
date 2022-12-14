@@ -9,10 +9,14 @@ import Typography from "@mui/material/Typography";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
+import PendingIcon from "@mui/icons-material/Pending";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import { Tooltip } from "@mui/material";
 import FriendRequest from "./FriendRequest";
+import { useUserContext } from "../../context/user-context";
 
 const AddNewUserCard = ({ name, _id, image }) => {
+  const { userProfile } = useUserContext();
   const [openFriendRequest, setOpenFriednRequest] = useState(false);
   const handleClose = () => {
     setOpenFriednRequest(false);
@@ -29,9 +33,23 @@ const AddNewUserCard = ({ name, _id, image }) => {
           </Typography>
         </CardContent>
         <Box sx={{ display: "flex", alignItems: "center", pl: 1, pb: 1 }}>
-          <Tooltip title="send friend request">
+          <Tooltip
+            title={
+              userProfile.pendingFriendRequest.includes(_id)
+                ? "cancel friend request"
+                : userProfile.friendList.includes(_id)
+                ? "remove friend"
+                : "send friend request"
+            }
+          >
             <IconButton aria-label="add" onClick={handleToggle}>
-              <PersonAddAltIcon />
+              {userProfile.pendingFriendRequest.includes(_id) ? (
+                <PendingIcon />
+              ) : userProfile.friendList.includes(_id) ? (
+                <PersonRemoveIcon />
+              ) : (
+                <PersonAddAltIcon />
+              )}
             </IconButton>
           </Tooltip>
           <Tooltip title="Send new message">

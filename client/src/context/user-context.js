@@ -1,44 +1,108 @@
-import React, { useContext, useState } from "react";
-import { authorizedFetch } from "../utils/axios";
+import React, { useContext, useReducer, useState, useEffect } from "react";
+import { authorizedFetch, customFetch } from "../utils/axios";
+import reducer from "../reducer/user-reducer";
+
+const initialState = {
+  user: {},
+  userProfile: null,
+};
 
 const userContext = React.createContext();
 
 const UserContextProvider = ({ children }) => {
-  const [loading, setLoading] = useState(false);
-  const searchNewUser = async (token, query) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [userLoading, setUserLoading] = useState(false);
+  const [isAuth, setIsAuth] = useState(false);
+
+  useEffect(() => {
+    console.log("USER EFFECT");
+  }, []);
+
+  const setUser = (user) => {
+    setUserLoading(true);
+    dispatch({ type: "SET_USER", payload: user });
+    // setUserLoading(false);
+  };
+
+  const getCurrentUser = async () => {
+    setUserLoading(true);
     try {
-      setLoading(true);
-      console.log(query);
       const {
-        data: { users },
-      } = await authorizedFetch(token).post("/houses/user/search-new", {
-        query: query,
-      });
-      setLoading(false);
-      return users;
+        data: { user },
+      } = await customFetch.get("/users/showUser");
+      setUser(user);
+      await getCurUserProfile(user.userId);
+      await setIsAuth(true);
+      setUserLoading(false);
     } catch (error) {
-      console.log(error);
-      setLoading(false);
-      return [];
+      console.error(error.response);
+      setUser(null);
+      setIsAuth(false);
+      setUserLoading(false);
     }
   };
 
-  const sendFriendRequest = async (token, userId) => {
+  const getCurUserProfile = async (userId) => {
     try {
-      setLoading(true);
-      const data = await authorizedFetch(token).post("/user/send-request", {
-        userId,
+      const {
+        data: { user },
+      } = await customFetch.get("/users/" + userId);
+
+      dispatch({ type: "SET_USER_PROFILE", payload: user });
+    } catch (error) {
+      console.log(error);
+      setUserLoading(false);
+    }
+  };
+
+  const editUserProfile = async ({ newUser }) => {
+    setUserLoading(true);
+    try {
+      await customFetch.patch("/users/updateUser", newUser);
+      setUserLoading(false);
+    } catch (error) {
+      console.log(error);
+      setUserLoading(false);
+    }
+  };
+
+  const changeUserPassword = async ({ oldPassword, newPassword }) => {
+    try {
+      const data = await customFetch.patch("/users/updateUserPassword", {
+        oldPassword,
+        newPassword,
       });
       console.log(data);
-      setLoading(false);
+      return { success: true };
     } catch (error) {
-      setLoading(false);
       console.log(error);
+      if (error.response.status === 401) {
+        return { success: false, msg: error.response.data.msg, code: 1 };
+      }
+      if (error.response.status === 400) {
+        return {
+          success: false,
+          msg: "New password is not valid,must be longer than 6 char",
+          code: 5,
+        };
+      }
+      // wrong - 401
     }
   };
 
   return (
-    <userContext.Provider value={{ loading, sendFriendRequest }}>
+    <userContext.Provider
+      value={{
+        ...state,
+        userLoading,
+        getCurrentUser,
+        setUser,
+        getCurUserProfile,
+        editUserProfile,
+        isAuth,
+        changeUserPassword,
+      }}
+    >
       {children}
     </userContext.Provider>
   );

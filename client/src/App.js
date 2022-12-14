@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Layout from "./pages/Layout";
 import { Routes, Route } from "react-router-dom";
 
@@ -15,6 +15,7 @@ import {
   UserUpdatePage,
   WelcomePage,
   SearchNewUserPage,
+  ChangePasswordPage,
 } from "./pages";
 
 const App = () => {
@@ -37,10 +38,17 @@ const App = () => {
               path="/home/expanses/create-new"
               element={<CreateNewExpansePage />}
             />
+
+            <Route path="/home/user" element={<UserPage />} />
+            <Route
+              path="/home/user/search-new"
+              element={<SearchNewUserPage />}
+            />
+            <Route
+              path="/home/user/password"
+              element={<ChangePasswordPage />}
+            />
           </Route>
-          <Route path="/home/user" element={<UserPage />} />
-          <Route path="/home/user/update" element={<UserUpdatePage />} />
-          <Route path="/home/user/search-new" element={<SearchNewUserPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

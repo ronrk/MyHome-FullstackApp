@@ -1,12 +1,18 @@
 import { Typography, Container, Stack, Button } from "@mui/material";
-import React from "react";
-import { useAuthContext } from "../context/auth-context";
+import React, { useEffect } from "react";
+
+import { useUserContext } from "../context/user-context";
 import { Link } from "react-router-dom";
 
 const WelcomePage = () => {
-  const { user } = useAuthContext();
+  const { isAuth, user, getCurrentUser } = useUserContext();
 
-  if (!user) {
+  useEffect(() => {
+    console.log("WELCOM EFFECT");
+    getCurrentUser();
+  }, []);
+
+  if (!isAuth) {
     return (
       <Stack
         sx={{ textAlign: "center", height: "100%" }}

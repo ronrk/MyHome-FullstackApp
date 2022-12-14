@@ -7,9 +7,10 @@ import { Box } from "@mui/material";
 
 import { useTaskContext } from "../../context/task-context";
 
-const TaskPageContent = ({ tasks }) => {
-  const { loading } = useTaskContext();
-  if (loading) {
+const TaskPageContent = ({ tasks, filter }) => {
+  const { taskLoading } = useTaskContext();
+
+  if (taskLoading) {
     return <LoadingSpinner />;
   }
 
@@ -19,7 +20,7 @@ const TaskPageContent = ({ tasks }) => {
   return (
     <Box>
       {tasks.map((item) => (
-        <TaskCard key={item.name} {...item} />
+        <TaskCard key={item._id} {...item} query={filter} />
       ))}
     </Box>
   );

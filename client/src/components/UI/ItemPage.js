@@ -4,6 +4,7 @@ import { Box, Paper, styled, Typography, Divider } from "@mui/material";
 const ItemPagePaper = styled(Paper)(({ theme }) => ({
   margin: theme.spacing(5),
   backgroundColor: theme.palette.primary.darkWithOpacity,
+  minHeight: 620,
 }));
 const ItemPageContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -23,7 +24,7 @@ const ItemPageHeaderTitle = styled(Typography)(({ theme }) => ({
   letterSpacing: ".2rem",
   fontFamily: "'Zen Dots', cursive",
   fontWeight: 700,
-  color: theme.palette.darkBlue.light,
+  color: theme.palette.secondary.main,
 }));
 
 const ItemPage = ({ children, title, headerContent }) => {

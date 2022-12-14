@@ -68,7 +68,7 @@ const responseToFriendRequest = async (req, res) => {
     throw new CustomError.BadRequestError("Must provide status");
   }
 
-  if (status !== "pending" && status !== "reject" && status !== "accepted") {
+  if (status !== "pending" && status !== "reject" && status !== "accept") {
     throw new CustomError.BadRequestError("Bad Value for status");
   }
 
@@ -90,7 +90,7 @@ const responseToFriendRequest = async (req, res) => {
   });
 
   if (isFriends) {
-    throw new CustomError.BadRequestError("alreadt friends");
+    throw new CustomError.BadRequestError("already friends");
   }
   // return res.json({ isFriends });
 
@@ -100,7 +100,7 @@ const responseToFriendRequest = async (req, res) => {
   let newUserFriends = [...curUser.friendList];
   let newUserReqFriends = [...reqUser.friendList];
 
-  if (status === "accepted") {
+  if (status === "accept") {
     newUserFriends.push(friendRequest.user);
     newUserReqFriends.push(friendRequest.toUser);
   }

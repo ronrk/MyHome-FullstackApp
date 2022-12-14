@@ -13,30 +13,31 @@ import TaskContextProvider from "./context/task-context";
 import ExpanseContextProvider from "./context/expanse-context";
 import HousesContextProvider from "./context/houses-context";
 import UserContextProvider from "./context/user-context";
-import { ThemeProvider, CssBaseline, Container } from "@mui/material";
+import SocialContextProvider from "./context/social-context";
+import { ThemeProvider, CssBaseline } from "@mui/material";
 
 const el = document.getElementById("root");
 const root = ReactDOM.createRoot(el);
 
 root.render(
   <UIContextProvider>
-    <AuthContextProvider>
-      <BrowserRouter>
-        <UserContextProvider>
-          <TaskContextProvider>
-            <ExpanseContextProvider>
-              <HousesContextProvider>
-                <ThemeProvider theme={theme}>
-                  <CssBaseline />
-                  {/* <TestMui /> */}
-
-                  <App />
-                </ThemeProvider>
-              </HousesContextProvider>
-            </ExpanseContextProvider>
-          </TaskContextProvider>
-        </UserContextProvider>
-      </BrowserRouter>
-    </AuthContextProvider>
+    <BrowserRouter>
+      <UserContextProvider>
+        <AuthContextProvider>
+          <SocialContextProvider>
+            <TaskContextProvider>
+              <ExpanseContextProvider>
+                <HousesContextProvider>
+                  <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <App />
+                  </ThemeProvider>
+                </HousesContextProvider>
+              </ExpanseContextProvider>
+            </TaskContextProvider>
+          </SocialContextProvider>
+        </AuthContextProvider>
+      </UserContextProvider>
+    </BrowserRouter>
   </UIContextProvider>
 );

@@ -1,21 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { Link } from "react-router-dom";
 
-import {
-  Box,
-  Typography,
-  Button,
-  FormControl,
-  InputLabel,
-  Select,
-  BootstrapInput,
-  MenuItem,
-  Divider,
-} from "@mui/material";
+import { Divider } from "@mui/material";
 
 import { useExpanseContext } from "../../context/expanse-context";
-import { useAuthContext } from "../../context/auth-context";
 
 import ItemPage from "../../components/UI/ItemPage";
 
@@ -27,33 +16,28 @@ import {
 
 const ExpansePage = () => {
   const {
-    getAllExpanses,
-    getCurrentYearExpenses,
     expanses,
-    loading,
+    expansesLoading,
     lastMonthsExpanses,
     lastYearExpanses,
+    getAllExpanses,
   } = useExpanseContext();
-  const { user } = useAuthContext();
-  console.log(expanses, lastMonthsExpanses, lastYearExpanses);
 
   useEffect(() => {
-    if (user) {
-      getCurrentYearExpenses(user.token);
-      getAllExpanses(user.token);
-    }
+    console.log("EXPANSE PAGE");
+    getAllExpanses();
   }, []);
 
   return (
     <ItemPage title="Your Expanses" headerContent={<ExpanseHeaderContent />}>
       <ExpansePageActions
         lastYearExpanses={lastYearExpanses}
-        loading={loading}
+        loading={expansesLoading}
       />
       <Divider />
       <ExpansePageContent
         expanses={expanses}
-        loading={loading}
+        loading={expansesLoading}
         lastMonthsExpanses={lastMonthsExpanses}
       />
     </ItemPage>

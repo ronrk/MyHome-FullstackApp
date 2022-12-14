@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const mockData = require("./MOCK_DATA.json");
+const mockData = require("./MOCK_DATA-expanse.json");
 
 const Expanse = require("./models/Expanse");
 const User = require("./models/User");

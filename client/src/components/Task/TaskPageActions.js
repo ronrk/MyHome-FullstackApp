@@ -26,6 +26,7 @@ const TaskPageActions = ({ filter }) => {
   };
 
   useEffect(() => {
+    console.log("TASKPAGE ACTIONS");
     setValue(mapQueryTabs[filter]);
   }, [filter]);
 
@@ -73,7 +74,7 @@ const TaskPageActions = ({ filter }) => {
       <Button
         variant="outlined"
         color="error"
-        onClick={() => deleteAllCompletedTasks(user.token)}
+        onClick={() => deleteAllCompletedTasks()}
       >
         Remove All Completed
       </Button>

@@ -16,24 +16,31 @@ import {
 import AddHomeWorkIcon from "@mui/icons-material/AddHomeWork";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import ErrorIcon from "@mui/icons-material/Error";
-import { useHousesContext } from "../../context/houses-context";
+import { useUserContext } from "../../context/user-context";
+import { useSocialContext } from "../../context/social-context";
+import LoadingSpinner from "../UI/LoadingSpinner";
 
 const MyHouseDashboard = () => {
   const [searchResult, setSearchResult] = useState([]);
-  const { searchNewUser, loading } = useHousesContext();
-  const { user } = useAuthContext();
+  const { searchNewUser, userLoading, userProfile } = useUserContext();
+  const { socialLoading } = useSocialContext();
 
   const handleSearch = async (e) => {
     try {
       if (e.target.value === "") {
         setSearchResult([]);
       }
-      const users = await searchNewUser(user.token, e.target.value);
+      const users = await searchNewUser(e.target.value);
       console.log(users);
       setSearchResult((prev) => [...users]);
     } catch (error) {}
   };
-  if (!user.houses) {
+
+  if (userLoading || socialLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (!userProfile.houses) {
     return (
       <Paper sx={{ bgcolor: "ddd", m: 2, p: 1 }}>
         <Box>
@@ -45,11 +52,16 @@ const MyHouseDashboard = () => {
             My Houses
           </Typography>
           <Typography variant="h6" textTransform="capitalize">
-            {user.name} seems you didn't connect to any house yet
+            {userProfile.name} seems you didn't connect to any house yet
           </Typography>
-          <Typography variant="body1">
-            can't find friends in friends list..
-          </Typography>
+          {userProfile.friendList.length === 0 ? (
+            <Typography variant="body1">
+              can't find friends in friends list..
+            </Typography>
+          ) : (
+            ""
+          )}
+
           <Button
             variant="contained"
             size="small"

@@ -1,4 +1,6 @@
-import React, { useReducer, useContext, useEffect } from "react";
+import axios from "axios";
+import React, { useReducer, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { customFetch } from "../utils/axios";
 import {
   rememberUserOnLocaleStorage,
@@ -6,47 +8,54 @@ import {
   removeUserFromLocaleStorage,
 } from "../utils/functions";
 
-import reducer from "../reducer/auth-reducer";
+import { useUserContext } from "./user-context";
 
 const authContext = React.createContext();
 
-const initialState = {
-  user: getUserFromLocaleStorage(),
-  isLoading: true,
-  error: { status: false },
-  isAuth: false,
-};
-
 const AuthContextProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState({ status: false });
+  const navigate = useNavigate();
+  const { setUser } = useUserContext();
+
+  useEffect(() => {
+    console.log("AUTH EFFECT");
+  }, []);
 
   const initilizeError = () => {
-    dispatch({ type: "INITIAL_ERROR" });
+    setAuthError({ status: false, message: "" });
   };
 
-  const login = async (email, password, rememberUser) => {
+  const login = async (email, password) => {
+    setAuthLoading(true);
+
     try {
       // console.log(email, password);
-      dispatch({ type: "SET_LOADING" });
+
       const {
         data: { user },
-      } = await customFetch.post("/auth/login", {
-        email,
-        password,
-      });
-      dispatch({ type: "USER_LOGIN", payload: user });
-      if (rememberUser) {
-        rememberUserOnLocaleStorage(user);
-      }
-      dispatch({ type: "END_LOADING" });
+      } = await customFetch.post(
+        "/auth/login",
+        { email, password },
+        {
+          withCredentials: true,
+        }
+      );
+
+      // console.log(user);
+      setUser(user);
+      navigate("/home", { replace: true });
+      initilizeError();
+      setAuthLoading(false);
     } catch (error) {
-      dispatch({ type: "SET_ERROR", payload: error.response.data.msg });
-      dispatch({ type: "END_LOADING" });
+      console.log(error);
+      setAuthLoading(false);
+      setAuthError({ status: true, message: error.response.data.msg });
     }
   };
-  const register = async (name, email, password, rememberUser) => {
+  const register = async (name, email, password) => {
+    setAuthLoading(true);
     try {
-      dispatch({ type: "SET_LOADING" });
       const {
         data: { user },
       } = await customFetch.post("/auth/register", {
@@ -55,30 +64,41 @@ const AuthContextProvider = ({ children }) => {
         password,
       });
 
-      dispatch({ type: "USER_REGISTER", payload: user });
-      if (rememberUser) {
-        rememberUserOnLocaleStorage(user);
-      }
-      dispatch({ type: "END_LOADING" });
+      console.log(user);
+
+      await setUser(user);
+      initilizeError();
+      navigate("/home", { replace: true });
+      setAuthLoading(false);
     } catch (error) {
-      dispatch({ type: "SET_ERROR", payload: error.response.data.msg });
-      dispatch({ type: "END_LOADING" });
+      console.log(error);
+      setAuthError({ status: true, message: error.response.data.msg });
+      setAuthLoading(false);
     }
   };
 
-  const logout = () => {
-    removeUserFromLocaleStorage();
-    dispatch({ type: "LOGOUT_USER" });
+  const logout = async () => {
+    setAuthLoading(true);
+    try {
+      await customFetch("/auth/logout");
+      setUser(null);
+      navigate("/", { replace: true });
+      setAuthLoading(false);
+    } catch (error) {
+      console.log(error.response);
+      setAuthLoading(false);
+    }
   };
 
   return (
     <authContext.Provider
       value={{
-        ...state,
         login,
         register,
         initilizeError,
         logout,
+        authLoading,
+        authError,
       }}
     >
       {children}

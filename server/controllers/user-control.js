@@ -58,7 +58,7 @@ const updateUserPassword = async (req, res) => {
   }
 
   user.password = newPassword;
-  user.save();
+  await user.save({ validateBeforeSave: true });
   res.status(StatusCodes.OK).json({ msg: "Success! password updated" });
 };
 const getCurrentUser = async (req, res) => {

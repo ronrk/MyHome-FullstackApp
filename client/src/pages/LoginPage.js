@@ -4,18 +4,18 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 
 import { useAuthContext } from "../context/auth-context";
 
-import { BpCheckbox } from "../components";
 import {
   Avatar,
   Button,
   TextField,
-  FormControlLabel,
   Box,
   Typography,
   FormGroup,
 } from "@mui/material";
 
 import LockOpenIcon from "@mui/icons-material/LockOpen";
+import { useUserContext } from "../context/user-context";
+import LoadingSpinner from "../components/UI/LoadingSpinner";
 
 const LoginPage = () => {
   const { pathname } = useLocation();
@@ -24,11 +24,11 @@ const LoginPage = () => {
     email: "",
     name: "",
     password: "",
-    checked: false,
   });
-  const { user, isAuth, login, register, error, initilizeError } =
+  const { login, register, authError, initilizeError, authLoading } =
     useAuthContext();
-  const { email, name, password, checked } = values;
+  const { isAuth, userLoading } = useUserContext();
+  const { email, name, password } = values;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,36 +39,51 @@ const LoginPage = () => {
     });
   };
 
-  const handleRememberMeChange = (e) => {
-    setValues((prev) => ({ ...prev, checked: e.target.checked }));
+  const handleFocus = (e) => {
+    initilizeError();
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("submit");
-    if (isAuth) {
-      console.error("user already login");
-      return;
-    }
     if (pathname === "/login") {
-      login(email, password, checked);
+      login(email, password);
       return;
     }
     if (pathname === "/register") {
-      register(name, email, password, checked);
+      register(name, email, password);
       return;
     }
   };
 
   useEffect(() => {
-    if (user && user.token) {
+    if (isAuth) {
       navigate("/home");
     }
-  }, [user]);
+  }, [isAuth]);
 
   useEffect(() => {
     initilizeError();
   }, [pathname]);
+
+  if (userLoading || authLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          maxWidth: 500,
+          minWidth: 300,
+          m: "0 auto",
+          mt: 2,
+          p: 2,
+        }}
+      >
+        <LoadingSpinner />
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -103,7 +118,7 @@ const LoginPage = () => {
         <FormGroup>
           {pathname === "/login" ? null : (
             <TextField
-              error={error.status}
+              error={authError.status}
               margin="normal"
               fullWidth
               required
@@ -113,10 +128,11 @@ const LoginPage = () => {
               label="Name"
               value={name}
               onChange={handleChange}
+              onFocus={handleFocus}
             />
           )}
           <TextField
-            error={error.status}
+            error={authError.status}
             fullWidth
             required
             margin="normal"
@@ -124,13 +140,13 @@ const LoginPage = () => {
             name="email"
             label="Email Address"
             autoComplete="email"
-            autoFocus
             value={email}
             onChange={handleChange}
             type="email"
+            onFocus={handleFocus}
           />
           <TextField
-            error={error.status}
+            error={authError.status}
             fullWidth
             required
             margin="normal"
@@ -141,7 +157,8 @@ const LoginPage = () => {
             label="Password"
             value={password}
             onChange={handleChange}
-            helperText={error.status ? error.message : ""}
+            onFocus={handleFocus}
+            helperText={authError.status ? authError.message : ""}
           />
         </FormGroup>
         <Box display="flex" alignItems="center">
@@ -159,14 +176,6 @@ const LoginPage = () => {
           >
             {pathname === "/login" ? "Sign In" : "Sign Up"}
           </Button>
-          <FormControlLabel
-            sx={{ marginLeft: "auto" }}
-            onChange={handleRememberMeChange}
-            control={
-              <BpCheckbox value="remember" name="remember" id="remember" />
-            }
-            label="Remember me"
-          />
         </Box>
         <Button
           variant="outlined"

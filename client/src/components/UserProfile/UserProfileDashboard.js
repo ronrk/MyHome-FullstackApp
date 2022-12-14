@@ -18,13 +18,16 @@ import {
   Grid,
 } from "@mui/material/";
 
+import LoadingSpinner from "../UI/LoadingSpinner";
+
 import FormatListBulletedSharpIcon from "@mui/icons-material/FormatListBulletedSharp";
 import PointOfSaleSharpIcon from "@mui/icons-material/PointOfSaleSharp";
 import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
-import { bgcolor } from "@mui/system";
+import { useUserContext } from "../../context/user-context";
 
 const UserProfileDashboard = () => {
-  const { user, logout } = useAuthContext();
+  const { logout } = useAuthContext();
+  const { userProfile, userLoading } = useUserContext();
   const [showBackdrop, setShowBackdrop] = useState(false);
 
   const backdropShowShow = () => {
@@ -35,8 +38,12 @@ const UserProfileDashboard = () => {
     setShowBackdrop(false);
   };
 
+  if (userLoading) {
+    return <LoadingSpinner />;
+  }
+
   return (
-    <Card elevation={4} sx={{ maxWidth: 600, bgcolor: "darkBlue.widhOpacity" }}>
+    <Card elevation={2} sx={{ maxWidth: 600, bgcolor: "#fff" }}>
       <CardActionArea
         onMouseOver={backdropShowShow}
         onMouseLeave={backdropShowClose}
@@ -57,13 +64,13 @@ const UserProfileDashboard = () => {
                 color="primary.dark"
                 textTransform="capitalize"
               >
-                {user.name}
+                {userProfile.name}
               </Typography>
               <Typography variant="body2" color="secondary.common">
-                {user.email}
+                {userProfile.email}
               </Typography>
               <Typography variant="body1" color="text.secondary">
-                {user.description}
+                {userProfile.description}
               </Typography>
             </CardContent>
           </Grid>
@@ -85,7 +92,7 @@ const UserProfileDashboard = () => {
               open={showBackdrop}
               onClick={backdropShowClose}
               component={Link}
-              to="/user-edit"
+              to="/home/user"
             >
               <Typography
                 sx={{

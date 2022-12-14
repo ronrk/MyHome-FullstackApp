@@ -2,33 +2,22 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { useUIContext } from "../../context/ui-context";
-import { useAuthContext } from "../../context/auth-context";
 
 import UserMenu from "./UserMenu";
+import AuthNavbarBox from "./AuthNavbarBox";
 
-import {
-  IconButton,
-  Toolbar,
-  Typography,
-  Tooltip,
-  Box,
-  Button,
-} from "@mui/material";
+import { IconButton, Toolbar, Typography } from "@mui/material";
 import { StyledNavbar } from "./StyledNavbar";
 import MenuOpenSharpIcon from "@mui/icons-material/MenuOpenSharp";
 import RoofingSharpIcon from "@mui/icons-material/RoofingSharp";
 import { AccountCircle } from "@mui/icons-material";
 
-const Navbar = () => {
-  const {
-    isDrawerOpen,
-    toggleDrawer,
-    drawerWidth,
-    handleOpenUserMenu,
-    handleCloseUserMenu,
-  } = useUIContext();
+import { useUserContext } from "../../context/user-context";
 
-  const { user, logout } = useAuthContext();
+const Navbar = () => {
+  const { isDrawerOpen, toggleDrawer, drawerWidth } = useUIContext();
+
+  const { isAuth } = useUserContext();
 
   return (
     <StyledNavbar
@@ -37,7 +26,7 @@ const Navbar = () => {
       drawerwidth={drawerWidth}
     >
       <Toolbar disableGutters sx={{ mt: 1, mb: 1, pl: 2, pr: 2 }}>
-        {user && user.token && (
+        {isAuth && (
           <IconButton
             onClick={toggleDrawer}
             edge="start"
@@ -80,11 +69,7 @@ const Navbar = () => {
         >
           My Houses
         </Typography>
-        {user ? (
-          <Button onClick={logout} color="error" variant="outlined">
-            Logout
-          </Button>
-        ) : null}
+        {isAuth ? <AuthNavbarBox /> : null}
       </Toolbar>
     </StyledNavbar>
   );

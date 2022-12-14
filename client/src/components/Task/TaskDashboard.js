@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Accordion,
@@ -10,6 +10,7 @@ import {
   Typography,
   Tooltip,
   IconButton,
+  TextField,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddTaskSharpIcon from "@mui/icons-material/AddTaskSharp";
@@ -21,15 +22,23 @@ import TaskAltSharpIcon from "@mui/icons-material/TaskAltSharp";
 import LoadingSpinner from "../UI/LoadingSpinner.js";
 
 import { useTaskContext } from "../../context/task-context.js";
-import { useAuthContext } from "../../context/auth-context";
+import { useUserContext } from "../../context/user-context.js";
 
 const TaskDashboard = ({ loading }) => {
-  const { tasks, editTask, getAllTasks } = useTaskContext();
-  const { user } = useAuthContext();
+  const { tasks, editTask, getAllTasks, deleteTask } = useTaskContext();
+  const { userProfile } = useUserContext();
   const [expanded, setExpanded] = useState(false);
+  const [onEdit, setOnEdit] = useState(false);
+  const [value, setValue] = useState("");
 
-  const handleStatusChange = () => {
-    // editTask({ name, status, _id }, user.token);
+  const handleStatusChange = ({ status, name = value, _id }) => {
+    const newStatus = status === "pending" ? "done" : "pending";
+
+    editTask({ name, status: newStatus, _id });
+  };
+
+  const handleChange = (e) => {
+    setValue(e.target.value);
   };
 
   const handleAccordionChange = (panel) => (event, isExpanded) => {
@@ -75,7 +84,9 @@ const TaskDashboard = ({ loading }) => {
               id={`panel${idx + 1}bh-header`}
               sx={{ display: "flex", alignItems: "center" }}
             >
-              <Typography textTransform="capitalize">{task.name}</Typography>
+              {onEdit ? null : (
+                <Typography textTransform="capitalize">{name}</Typography>
+              )}
             </AccordionSummary>
             <AccordionDetails
               sx={{
@@ -86,9 +97,33 @@ const TaskDashboard = ({ loading }) => {
                 gap: 3,
               }}
             >
+              {onEdit ? (
+                <TextField label={name} onChange={handleChange} />
+              ) : null}
               <ButtonGroup size="small" sx={{ mt: 1 }}>
-                <Button endIcon={<EditSharpIcon />}>Edit</Button>
-                <Button startIcon={<DeleteIcon />}>Delete</Button>
+                <Button
+                  color={onEdit ? "secondary" : "primary"}
+                  endIcon={<EditSharpIcon />}
+                  onClick={
+                    onEdit
+                      ? () => {
+                          editTask({ name: value, status, _id });
+                          setOnEdit(false);
+                        }
+                      : () => {
+                          setOnEdit(true);
+                        }
+                  }
+                >
+                  {onEdit ? "Submit" : "Edit"}
+                </Button>
+                <Button
+                  color="error"
+                  startIcon={<DeleteIcon />}
+                  onClick={() => deleteTask(_id)}
+                >
+                  Delete
+                </Button>
               </ButtonGroup>
 
               <Tooltip
@@ -97,7 +132,9 @@ const TaskDashboard = ({ loading }) => {
                   status === "done" ? "Mark as Active" : "Mark as Complete"
                 }
               >
-                <IconButton onClick={handleStatusChange}>
+                <IconButton
+                  onClick={(e) => handleStatusChange({ status, name, _id })}
+                >
                   {status === "done" ? (
                     <TaskAltSharpIcon color="success" />
                   ) : (

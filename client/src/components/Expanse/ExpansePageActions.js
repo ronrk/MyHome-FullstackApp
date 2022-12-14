@@ -22,7 +22,7 @@ const ExpansePageActions = ({ lastYearExpanses, loading }) => {
         variant="contained"
         endIcon={<AddShoppingCartSharpIcon />}
         component={Link}
-        to="/home/tasks/create-new"
+        to="/home/expanses/create-new"
         sx={{ textTransform: "capitalize" }}
       >
         Add New Expanse

@@ -1,12 +1,14 @@
-import React, { useEffect } from "react";
-import { useNavigate, Navigate, Outlet, useLocation } from "react-router-dom";
-
+import React, { useEffect, useState } from "react";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import LoadingSpinner from "../components/UI/LoadingSpinner";
 import { useAuthContext } from "../context/auth-context";
 
+import { useUserContext } from "../context/user-context";
+
 const AuthWrapper = ({ children }) => {
-  const { isAuth, user } = useAuthContext();
+  const { user, getCurrentUser, isAuth, userLoading } = useUserContext();
+  const { authLoading } = useAuthContext();
   const location = useLocation();
-  const navigate = useNavigate();
 
   // TODO-GET USER LOCATION
   //   let location = useLocation();
@@ -21,7 +23,18 @@ const AuthWrapper = ({ children }) => {
   // return <Navigate to="/login" state={{ from: location }} replace />;
   //   }
 
-  if (!user || user?.token === undefined) {
+  const getUser = async () => {
+    await getCurrentUser();
+  };
+
+  useEffect(() => {
+    console.log("AUTHWRAPPER");
+    if (!isAuth) {
+      getUser();
+    }
+  }, []);
+
+  if (!isAuth) {
     console.log({ el: "AUTHWRAPPER", auth: "USER IS NOT EXIST", user });
     return <Navigate to="/login" state={{ from: location }} replace />;
   }

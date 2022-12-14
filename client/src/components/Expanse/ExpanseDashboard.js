@@ -26,7 +26,7 @@ const ExpanseDashbaord = ({ loading }) => {
           variant="contained"
           endIcon={<AddShoppingCartSharpIcon />}
           component={Link}
-          to="/home/tasks/create-new"
+          to="/home/expanses/create-new"
           sx={{ textTransform: "capitalize", ml: 1 }}
           size="small"
         >

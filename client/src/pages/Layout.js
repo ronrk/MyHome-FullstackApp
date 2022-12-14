@@ -1,12 +1,10 @@
-import React from "react";
-import { Link, Outlet } from "react-router-dom";
-import { Box, Toolbar, Grid, Container } from "@mui/material";
+import React, { useEffect } from "react";
+import { Outlet } from "react-router-dom";
+import { Box, Toolbar } from "@mui/material";
 import { Navbar, Sidebar } from "../components";
-
-import { useAuthContext } from "../context/auth-context";
+import { useUserContext } from "../context/user-context";
 
 const Layout = () => {
-  const { user } = useAuthContext();
   return (
     <Box sx={{ display: "flex" }}>
       <Navbar />
